@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap');
+
+@import "tailwindcss";
+
+/* ============================================
+   CYBERPUNK THEME — CSS Custom Properties
+   ============================================ */
+:root {
+  --neon-blue: #00d4ff;
+  --crimson: #ff2d55;
+  --deep-black: #0a0a0f;
+  --violet: #8b5cf6;
+  --cyan: #22d3ee;
+  --white-highlight: #f0f0ff;
+
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #0f0f1a;
+  --bg-glass: rgba(10, 10, 15, 0.7);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-glow: rgba(0, 212, 255, 0.2);
+}
+
+/* ============================================
+   BASE
+   ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--bg-primary);
+  color: var(--white-highlight);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   GLASSMORPHISM
+   ============================================ */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+}
+
+.glass-glow {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.05);
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.15);
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.3);
+}
+
+/* ============================================
+   CHAT PANEL
+   ============================================ */
+.bottom-chat {
+  background: rgba(5, 5, 10, 0.8);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.mode-tab {
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.mode-tab:hover {
+  color: var(--white-highlight) !important;
+}
+
+.chat-message {
+  max-width: 85%;
+}
+
+.chat-message.ml-auto .chat-bubble {
+  margin-left: auto;
+}
+
+.chat-bubble {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid;
+  backdrop-filter: blur(4px);
+}
+
+.chat-role {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+.chat-content {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(240, 240, 255, 0.85);
+  word-break: break-word;
+}
+
+.cursor-blink {
+  display: inline-block;
+  animation: blink 0.8s step-end infinite;
+  color: var(--crimson);
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ============================================
+   HOLOGRAM EFFECTS
+   ============================================ */
+.holo-effects {
+  pointer-events: none;
+}
+
+/* ============================================
+   LEFT PANEL
+   ============================================ */
+.left-panel {
+  overflow: hidden;
+}
+
+/* ============================================
+   MAIN AREA
+   ============================================ */
+.main-area {
+  position: relative;
+}
+
+/* ============================================
+   TOP BAR
+   ============================================ */
+.top-bar {
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(0, 212, 255, 0.4); }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
+  52% { opacity: 0.7; }
+  54% { opacity: 0.95; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   SELECTION
+   ============================================ */
+::selection {
+  background: rgba(0, 212, 255, 0.3);
+  color: var(--white-highlight);
+}

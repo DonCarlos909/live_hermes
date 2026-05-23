@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicedoc/tauri/dev/.schema/config-schema.json",
+  "identifier": "default",
+  "description": "Default permissions for Hermes",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "shell:allow-open"
+  ]
+}
