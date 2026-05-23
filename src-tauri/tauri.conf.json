@@ -18,7 +18,8 @@
         "minHeight": 700,
         "decorations": true,
         "transparent": false,
-        "fullscreen": false
+        "fullscreen": false,
+        "icon": "icons/icon.ico"
       }
     ],
     "security": {
@@ -27,13 +28,18 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["msi", "nsis"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "publisher": "Hermes AI",
+    "copyright": "© 2026 Hermes AI. All rights reserved.",
+    "category": "Utility",
+    "shortDescription": "HERMES — Live Cybernetic Intelligence Companion",
+    "longDescription": "A cyberpunk-themed AI companion GUI with animated avatar, agent orchestration, and holographic interface."
   }
 }

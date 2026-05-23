@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useHermesStore } from '../../store/hermes'
 import type { AvatarState } from '../../store/types'
+import hermesImg from '../../assets/avatar/hermes-circle.png'
 import './avatar.css'
 
 const STATE_LABELS: Record<AvatarState, string> = {
@@ -24,20 +25,21 @@ export default function AvatarCore() {
   const frameRef = useRef<number>(0)
   const timeRef = useRef(0)
 
-  // Procedural avatar rendering on canvas
-  const draw = useCallback(
+  // Particle ring around the avatar image
+  const drawParticles = useCallback(
     (ctx: CanvasRenderingContext2D, w: number, h: number, t: number) => {
-      ctx.clearRect(0, 0, w, h)
       const cx = w / 2
       const cy = h / 2
       const state = useHermesStore.getState().avatarState
       const color = STATE_COLORS[state]
 
-      // Aura
-      const auraRadius = 120 + Math.sin(t * 2) * 10 + (state === 'speaking' ? Math.sin(t * 8) * 15 : 0)
-      const gradient = ctx.createRadialGradient(cx, cy, 20, cx, cy, auraRadius)
-      gradient.addColorStop(0, `${color}33`)
-      gradient.addColorStop(0.5, `${color}11`)
+      ctx.clearRect(0, 0, w, h)
+
+      // Outer aura
+      const auraRadius = 160 + Math.sin(t * 2) * 15 + (state === 'speaking' ? Math.sin(t * 8) * 20 : 0)
+      const gradient = ctx.createRadialGradient(cx, cy, 60, cx, cy, auraRadius)
+      gradient.addColorStop(0, `${color}22`)
+      gradient.addColorStop(0.5, `${color}0a`)
       gradient.addColorStop(1, 'transparent')
       ctx.fillStyle = gradient
       ctx.beginPath()
@@ -45,120 +47,74 @@ export default function AvatarCore() {
       ctx.fill()
 
       // Outer ring
-      ctx.strokeStyle = `${color}44`
-      ctx.lineWidth = 2
+      ctx.strokeStyle = `${color}33`
+      ctx.lineWidth = 1.5
       ctx.beginPath()
-      ctx.arc(cx, cy, 100, 0, Math.PI * 2)
+      ctx.arc(cx, cy, 150, 0, Math.PI * 2)
+      ctx.stroke()
+
+      // Second ring
+      ctx.strokeStyle = `${color}15`
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.arc(cx, cy, 170, 0, Math.PI * 2)
       ctx.stroke()
 
       // Rotating symbols for thinking
       if (state === 'thinking') {
-        for (let i = 0; i < 6; i++) {
-          const angle = (i / 6) * Math.PI * 2 + t * 1.5
-          const sx = cx + Math.cos(angle) * 130
-          const sy = cy + Math.sin(angle) * 130
-          ctx.fillStyle = `${color}88`
-          ctx.font = '14px monospace'
+        for (let i = 0; i < 8; i++) {
+          const angle = (i / 8) * Math.PI * 2 + t * 1.5
+          const sx = cx + Math.cos(angle) * 190
+          const sy = cy + Math.sin(angle) * 190
+          ctx.fillStyle = `${color}66`
+          ctx.font = '16px monospace'
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
           ctx.fillText('◆', sx, sy)
         }
       }
 
-      // Inner avatar circle (stylized face)
-      const floatY = Math.sin(t * 1.5) * 5
-      const faceY = cy + floatY
-
-      // Head glow
-      const headGrad = ctx.createRadialGradient(cx, faceY, 10, cx, faceY, 60)
-      headGrad.addColorStop(0, `${color}22`)
-      headGrad.addColorStop(1, 'transparent')
-      ctx.fillStyle = headGrad
-      ctx.beginPath()
-      ctx.arc(cx, faceY, 60, 0, Math.PI * 2)
-      ctx.fill()
-
-      // Face outline
-      ctx.strokeStyle = color
-      ctx.lineWidth = 2.5
-      ctx.beginPath()
-      ctx.arc(cx, faceY, 45, 0, Math.PI * 2)
-      ctx.stroke()
-
-      // Eyes
-      const eyeSpacing = 16
-      const eyeY = faceY - 5
-      const blinkPhase = Math.sin(t * 0.8)
-      const eyeHeight = blinkPhase > 0.95 ? 1 : 8
-
-      // Left eye
-      ctx.fillStyle = color
-      ctx.beginPath()
-      ctx.ellipse(cx - eyeSpacing, eyeY, 6, eyeHeight, 0, 0, Math.PI * 2)
-      ctx.fill()
-
-      // Right eye
-      ctx.beginPath()
-      ctx.ellipse(cx + eyeSpacing, eyeY, 6, eyeHeight, 0, 0, Math.PI * 2)
-      ctx.fill()
-
-      // Eye glow
-      ctx.shadowColor = color
-      ctx.shadowBlur = 10
-      ctx.beginPath()
-      ctx.ellipse(cx - eyeSpacing, eyeY, 3, eyeHeight / 2, 0, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.beginPath()
-      ctx.ellipse(cx + eyeSpacing, eyeY, 3, eyeHeight / 2, 0, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.shadowBlur = 0
-
-      // Mouth — changes with state
-      const mouthY = faceY + 18
-      ctx.strokeStyle = color
-      ctx.lineWidth = 2
-      ctx.beginPath()
-      if (state === 'speaking') {
-        const mouthOpen = 4 + Math.sin(t * 12) * 4
-        ctx.ellipse(cx, mouthY, 10, mouthOpen, 0, 0, Math.PI * 2)
-        ctx.stroke()
-      } else if (state === 'thinking') {
-        ctx.moveTo(cx - 8, mouthY)
-        ctx.lineTo(cx + 8, mouthY)
-        ctx.stroke()
-      } else {
-        ctx.arc(cx, mouthY - 3, 8, 0.1 * Math.PI, 0.9 * Math.PI)
-        ctx.stroke()
-      }
-
-      // Listening indicator
+      // Listening arcs
       if (state === 'listening') {
-        for (let i = 1; i <= 3; i++) {
-          ctx.strokeStyle = `${color}${Math.floor((1 - i * 0.25) * 255).toString(16).padStart(2, '0')}`
+        for (let i = 1; i <= 4; i++) {
+          ctx.strokeStyle = `${color}${Math.floor((1 - i * 0.2) * 255).toString(16).padStart(2, '0')}`
           ctx.lineWidth = 1.5
           ctx.beginPath()
-          ctx.arc(cx, faceY, 55 + i * 12, -0.3 * Math.PI, 0.3 * Math.PI)
+          ctx.arc(cx, cy, 160 + i * 14, -0.4 * Math.PI, 0.4 * Math.PI)
           ctx.stroke()
         }
       }
 
-      // Hologram scanline effect
-      const scanY = ((t * 40) % h)
-      ctx.fillStyle = `${color}08`
-      ctx.fillRect(0, scanY, w, 3)
-
-      // Particles around avatar
-      for (let i = 0; i < 20; i++) {
-        const angle = (i / 20) * Math.PI * 2 + t * 0.5
-        const dist = 80 + Math.sin(t * 2 + i) * 30
+      // Floating particles
+      for (let i = 0; i < 30; i++) {
+        const angle = (i / 30) * Math.PI * 2 + t * 0.3
+        const dist = 130 + Math.sin(t * 2 + i * 0.7) * 50
         const px = cx + Math.cos(angle) * dist
-        const py = faceY + Math.sin(angle) * dist
-        const alpha = 0.3 + Math.sin(t * 3 + i * 0.5) * 0.3
+        const py = cy + Math.sin(angle) * dist
+        const alpha = 0.2 + Math.sin(t * 3 + i * 0.5) * 0.2
         ctx.fillStyle = `${color}${Math.floor(alpha * 255).toString(16).padStart(2, '0')}`
         ctx.beginPath()
         ctx.arc(px, py, 1.5, 0, Math.PI * 2)
         ctx.fill()
       }
+
+      // Speaking waveform
+      if (state === 'speaking') {
+        ctx.strokeStyle = `${color}44`
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        for (let x = 0; x < w; x += 2) {
+          const waveY = cy + 200 + Math.sin(x * 0.05 + t * 6) * 15 + Math.sin(x * 0.02 + t * 3) * 10
+          if (x === 0) ctx.moveTo(x, waveY)
+          else ctx.lineTo(x, waveY)
+        }
+        ctx.stroke()
+      }
+
+      // Hologram scanline
+      const scanY = ((t * 50) % h)
+      ctx.fillStyle = `${color}06`
+      ctx.fillRect(0, scanY, w, 2)
     },
     [],
   )
@@ -181,7 +137,7 @@ export default function AvatarCore() {
 
     const animate = () => {
       timeRef.current += 0.016
-      draw(ctx, canvas.width, canvas.height, timeRef.current)
+      drawParticles(ctx, canvas.width, canvas.height, timeRef.current)
       frameRef.current = requestAnimationFrame(animate)
     }
     frameRef.current = requestAnimationFrame(animate)
@@ -190,11 +146,30 @@ export default function AvatarCore() {
       cancelAnimationFrame(frameRef.current)
       window.removeEventListener('resize', resize)
     }
-  }, [draw])
+  }, [drawParticles])
+
+  const floatY = Math.sin(Date.now() * 0.001) * 5
 
   return (
     <div className="avatar-core">
       <canvas ref={canvasRef} className="avatar-canvas" />
+
+      {/* Hermes face image */}
+      <motion.div
+        className="avatar-image-container"
+        animate={{ y: [floatY - 5, floatY + 5, floatY - 5] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <div className="avatar-glow-ring" />
+        <img
+          src={hermesImg}
+          alt="Hermes"
+          className="avatar-image"
+        />
+        <div className="avatar-scanline" />
+      </motion.div>
+
+      {/* State label */}
       <motion.div
         className="avatar-state-label"
         animate={{ opacity: [0.5, 1, 0.5] }}

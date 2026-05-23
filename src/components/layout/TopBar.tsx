@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Shield, Wifi, WifiOff, Clock, Brain, Activity } from 'lucide-react'
+import { Shield, Wifi, WifiOff, Clock, Activity } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
+import hermesIcon from '../../assets/avatar/hermes-face.jpg'
 
 export default function TopBar() {
   const isConnected = useHermesStore((s) => s.isConnected)
@@ -34,7 +35,12 @@ export default function TopBar() {
       {/* Left: Logo + Status */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <Brain size={18} className="text-[#00d4ff]" style={{ filter: 'drop-shadow(0 0 4px #00d4ff)' }} />
+          <img
+            src={hermesIcon}
+            alt="Hermes"
+            className="w-7 h-7 rounded-full object-cover border border-[#00d4ff33]"
+            style={{ boxShadow: '0 0 8px rgba(0,212,255,0.3)' }}
+          />
           <span className="font-['Orbitron'] text-sm font-bold tracking-wider text-[#f0f0ff]">
             HERMES
           </span>
