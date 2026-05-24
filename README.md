@@ -56,6 +56,7 @@ npm run tauri build
 | 🧠 **Memory Panel** | Neural network visualization of memory nodes |
 | 🛠️ **Tool Panel** | Holographic tool activation grid |
 | 📋 **Task Panel** | Live task tracking per agent with progress bars |
+| ⚙️ **Settings Panel** | LLM config, Ollama modules, Hermes Docker bridge, User Guide |
 
 ---
 
@@ -218,9 +219,103 @@ live_hermes/
 
 ## Roadmap
 
+| 📋 **Task Panel** | Live task tracking per agent with progress bars |
+| ⚙️ **Settings Panel** | LLM configuration, Ollama module manager, Hermes Docker connection, User Guide |
+
+---
+
+## Settings
+
+HERMES includes a full **Settings panel** accessible from the sidebar. It has 4 sub-tabs:
+
+### LLM Config
+- Add multiple LLM providers (Ollama, LM Studio, llama.cpp, vLLM, OpenRouter, Custom)
+- Configure base URL, model name, API key, and context length per provider
+- Test connection to each provider
+- Set active model for chat
+
+### Ollama Module Manager
+- Browse available AI models by category: Coding, Vision, Image, Chat, Reasoning, Embedding, Audio
+- One-click install/uninstall models via `ollama pull`
+- Shows model size and installation status
+- Recommended models pre-flagged
+
+### Hermes Docker Connection
+- Connect to Hermes Agent running in Docker container
+- Auto-detect Docker status
+- Test connection to Docker endpoint
+- Configure port and API key
+
+### User Guide
+- Complete interface documentation
+- Chat mode explanations
+- Setup instructions for Ollama and Docker
+- Keyboard shortcuts
+
+---
+
+## Ollama Integration
+
+HERMES can run AI models locally via [Ollama](https://ollama.com):
+
+### Auto-Install
+On first run, the setup wizard checks if Ollama is installed. If not, it offers to download and install it automatically.
+
+### Module Selection
+During first-run setup, select which AI capabilities you need:
+- **Coding** → Qwen 2.5 Coder (4.7 GB)
+- **Vision** → Llama 3.2 Vision (7.8 GB)
+- **Chat** → Llama 3.2 (2.0 GB)
+- **Reasoning** → DeepSeek R1 (4.7 GB)
+- **Image Generation** → Stable Diffusion XL (6.5 GB)
+- **Speech-to-Text** → Whisper (1.5 GB)
+
+### Manual Setup
+```bash
+# Install Ollama from https://ollama.com
+# Then pull models:
+ollama pull qwen2.5-coder:7b
+ollama pull llama3.2-vision:11b
+ollama pull llama3.2:3b
+ollama pull deepseek-r1:7b
+```
+
+---
+
+## Hermes Docker Integration
+
+HERMES desktop app (Windows) communicates with Hermes Agent (Docker) via HTTP API — the same way it connects to Discord.
+
+### Architecture
+```
+┌─────────────────────┐     HTTP      ┌──────────────────────┐
+│  HERMES Desktop App  │ ◄──────────► │  Docker Container     │
+│  (Windows / Tauri)   │  localhost   │  Hermes Agent + LLM  │
+│                      │  :11434       │  (Ollama/OpenRouter) │
+└─────────────────────┘              └──────────────────────┘
+```
+
+### Setup
+1. Install Docker Desktop on Windows
+2. The app auto-detects Docker on first run
+3. Enter the Docker URL (default: `http://localhost:11434`)
+4. Click **TEST CONNECTION** to verify
+5. Once connected, all chat uses real Hermes AI
+
+### Communication Protocol
+- Hermes Docker exposes an Ollama-compatible API at `/api/tags`, `/api/generate`
+- The Tauri backend uses `reqwest` for HTTP calls
+- Frontend calls Tauri commands via `invoke()`
+- Same pattern as Discord webhook integration
+
+---
+
+## Roadmap
+
 - **Phase 1** ✅ — Scaffold, avatar, streaming chat, agent graph, hologram FX, Windows installer
-- **Phase 2** 🔄 — Live lip sync (LivePortrait), particle system upgrades, memory visualization
-- **Phase 3** 📋 — Live2D avatar, multi-agent orchestration, autonomous task execution
+- **Phase 2** ✅ — Settings panel, Ollama integration, Hermes Docker bridge, first-run setup wizard
+- **Phase 3** 🔄 — Live lip sync (LivePortrait), particle system upgrades, memory visualization
+- **Phase 4** 📋 — Live2D avatar, multi-agent orchestration, autonomous task execution
 
 ---
 

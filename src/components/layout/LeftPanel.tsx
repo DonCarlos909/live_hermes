@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Wrench, ListTodo, FolderOpen, Network } from 'lucide-react'
+import { Brain, Wrench, ListTodo, FolderOpen, Network, Settings } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
 import MemoryPanel from '../sidebar/MemoryPanel'
 import ToolsPanel from '../sidebar/ToolsPanel'
 import TasksPanel from '../sidebar/TasksPanel'
 import AgentsPanel from '../sidebar/AgentsPanel'
+import SettingsPanel from '../sidebar/SettingsPanel'
 
 const TABS = [
   { id: 'agents', label: 'Agents', icon: Network },
@@ -12,6 +13,7 @@ const TABS = [
   { id: 'tools', label: 'Tools', icon: Wrench },
   { id: 'tasks', label: 'Tasks', icon: ListTodo },
   { id: 'files', label: 'Files', icon: FolderOpen },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ]
 
 function FilesPanel() {
@@ -40,6 +42,7 @@ export default function LeftPanel() {
       case 'tools': return <ToolsPanel />
       case 'tasks': return <TasksPanel />
       case 'files': return <FilesPanel />
+      case 'settings': return <SettingsPanel />
       default: return <AgentsPanel />
     }
   }
@@ -52,7 +55,7 @@ export default function LeftPanel() {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       {/* Tab bar */}
-      <div className="flex border-b border-white/5 shrink-0">
+      <div className="flex flex-wrap border-b border-white/5 shrink-0">
         {TABS.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -63,7 +66,7 @@ export default function LeftPanel() {
                 if (!leftPanelOpen) toggleLeftPanel()
                 setActiveTab(tab.id)
               }}
-              className="flex-1 flex flex-col items-center gap-0.5 py-2 transition-colors relative"
+              className="flex-1 min-w-[48px] flex flex-col items-center gap-0.5 py-2 transition-colors relative"
               style={{ color: isActive ? '#00d4ff' : '#333' }}
               title={tab.label}
             >

@@ -31,7 +31,10 @@ The HERMES window uses a **3-column, 2-row grid** divided into 4 zones:
 │  AGENT PANEL   │  (holographic avatar,    │  (data readouts,    │
 │  - bubble map  │   orbital ring,          │   telemetry bars,   │
 │  - task list   │   IDLE status below)     │   system metrics)   │
-│                │                          │                     │
+│  - settings    │                          │                     │
+│  - memory      │                          │                     │
+│  - tools       │                          │                     │
+│  - files       │                          │                     │
 ├────────────────┴──────────────────────────┴─────────────────────┤
 │  ZONE 3 — COMMAND INTERFACE (full width)                        │
 │  [CHAT] [TACTICAL] [CODING] [CTF] [RESEARCH] [AUTO]            │
@@ -297,6 +300,52 @@ USER   ▶ Initiate reconnaissance scan.
 - Input field: flex-grow, Share Tech Mono 13px, placeholder `--text-secondary`
 - Right buttons: `[≈]` settings icon + `[◄►]` navigation/submit — both in small bordered boxes, `--cyan-primary`
 - On focus: `border: 1px solid --cyan-primary`, `box-shadow: 0 0 12px rgba(0,232,255,0.15)`
+
+---
+
+## 5.6 Settings Panel (Zone 6)
+
+**Width:** ~280px (shares left panel)  
+**Background:** `--bg-panel`  
+**Border:** `border-right: 1px solid var(--border-panel)`
+
+### Sub-Tab Bar
+```
+[LLM Config] [Ollama] [Hermes] [User Guide]
+```
+- Height: 36px
+- Active tab: `border-bottom: 2px solid --cyan-primary`, `color: --cyan-primary`
+- Inactive tabs: `color: --text-secondary`
+- Icons: Brain, Cpu, Server, BookOpen respectively
+
+### Status Indicator (top-right)
+- Green dot + "HERMES LIVE" when Docker connected
+- Red dot + "LOCAL ONLY" when no Docker connection
+
+### LLM Config Sub-Panel
+- List of configured models with name, provider, base URL
+- Each card: name (editable), provider dropdown, model name input, base URL input
+- TEST button per model → green ✓ or red ✗
+- SET ACTIVE button → highlights active model with cyan glow
+- + ADD MODEL button (bottom)
+- API Key field shown only for providers that need it (OpenRouter, Custom)
+
+### Ollama Modules Sub-Panel
+- Category filter pills: ALL | CODING | VISION | IMAGE | CHAT | REASONING | EMBEDEDDING | AUDIO
+- Each module row: icon · name · model_name · size · INSTALL/REMOVE button
+- Recommended models tagged with "REC" badge
+- Stats bar: "X/Y INSTALLED · Z GB USED"
+
+### Hermes Connection Sub-Panel
+- Connection status card with Wi-Fi icon (green/red)
+- Docker URL input, Port input, API Key input
+- TEST CONNECTION button
+- Setup instructions (numbered list)
+
+### User Guide Sub-Panel
+- Scrollable content with sections: Getting Started, Chat Modes, Connecting LLM, Connecting Hermes, Agents, Memory & Tools, Keyboard Shortcuts
+- Each section: cyan header ▸, bullet points with `--text-secondary` body text
+- Mode reference table with color-coded badges
 
 ---
 

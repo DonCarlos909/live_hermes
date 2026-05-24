@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Shield, Wifi, WifiOff, Clock, Activity } from 'lucide-react'
+import { Shield, Wifi, WifiOff, Clock, Activity, Settings } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
 import hermesIcon from '../../assets/avatar/hermes-face.jpg'
 
@@ -8,6 +8,7 @@ export default function TopBar() {
   const isConnected = useHermesStore((s) => s.isConnected)
   const agents = useHermesStore((s) => s.agents)
   const mode = useHermesStore((s) => s.mode)
+  const setActiveTab = useHermesStore((s) => s.setActiveSidebarTab)
   const [time, setTime] = useState(new Date())
 
   useEffect(() => {
@@ -61,28 +62,38 @@ export default function TopBar() {
         </div>
       </div>
 
-      {/* Center: Mode indicator */}
-      <div
-        className="flex items-center gap-2 px-3 py-1 rounded-full border"
-        style={{
-          borderColor: `${modeColors[mode]}22`,
-          background: `${modeColors[mode]}08`,
-        }}
-      >
-        <Shield size={12} style={{ color: modeColors[mode] }} />
-        <span className="text-[9px] font-mono tracking-widest" style={{ color: modeColors[mode] }}>
-          {mode.toUpperCase()} MODE
-        </span>
-      </div>
+      {/* Center: Mode indicator + Agent/Task stats */}
+      <div className="flex items-center gap-3">
+        <div
+          className="flex items-center gap-2 px-3 py-1 rounded-full border"
+          style={{
+            borderColor: `${modeColors[mode]}22`,
+            background: `${modeColors[mode]}08`,
+          }}
+        >
+          <Shield size={12} style={{ color: modeColors[mode] }} />
+          <span className="text-[9px] font-mono tracking-widest" style={{ color: modeColors[mode] }}>
+            {mode.toUpperCase()} MODE
+          </span>
+        </div>
 
-      {/* Right: Stats + Time */}
-      <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5">
           <Activity size={12} className="text-[#00d4ff]" />
           <span className="text-[9px] font-mono text-white/50">
             {activeAgents} agents · {totalTasks} tasks
           </span>
         </div>
+      </div>
+
+      {/* Right: Time + Settings shortcut */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => setActiveTab('settings')}
+          className="text-white/20 hover:text-[#00d4ff] transition-colors p-1"
+          title="Open Settings"
+        >
+          <Settings size={14} />
+        </button>
 
         <div className="h-4 w-px bg-white/10" />
 

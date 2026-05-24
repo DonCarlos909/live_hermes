@@ -40,6 +40,53 @@ export interface AppTask {
   progress: number
 }
 
+// ============================================
+// LLM / Settings Types
+// ============================================
+
+export type LLMProvider = 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'openrouter' | 'custom'
+
+export interface LLMModel {
+  id: string
+  name: string
+  provider: LLMProvider
+  base_url: string
+  model_name: string
+  api_key: string
+  context_length: number
+  is_active: boolean
+}
+
+export interface OllamaModule {
+  id: string
+  name: string
+  description: string
+  category: 'coding' | 'vision' | 'image' | 'chat' | 'reasoning' | 'embedding' | 'audio'
+  model_name: string
+  size_gb: number
+  installed: boolean
+  recommended: boolean
+}
+
+export interface HermesConnectionConfig {
+  docker_url: string
+  api_key: string
+  port: number
+  connected: boolean
+}
+
+export interface UserSettings {
+  // LLM
+  active_provider: LLMProvider
+  models: LLMModel[]
+  ollama_modules: OllamaModule[]
+  hermes_docker: HermesConnectionConfig
+  // UI
+  audio_enabled: boolean
+  animations_enabled: boolean
+  theme: 'cyber' | 'dark' | 'matrix'
+}
+
 export interface HermesState {
   // Avatar
   avatarState: AvatarState
@@ -49,7 +96,7 @@ export interface HermesState {
   mode: HermesMode
   chatMode: ChatMode
   setMode: (mode: HermesMode) => void
-  setChatMode: (mode: ChatMode) => void
+  setChatMode: (chatMode: ChatMode) => void
 
   // Chat
   messages: ChatMessage[]
@@ -77,6 +124,14 @@ export interface HermesState {
   // Connection
   isConnected: boolean
   setConnected: (v: boolean) => void
+
+  // Settings
+  settings: UserSettings
+  updateSettings: (updates: Partial<UserSettings>) => void
+  addModel: (model: LLMModel) => void
+  removeModel: (id: string) => void
+  setActiveModel: (id: string) => void
+  updateOllamaModule: (id: string, installed: boolean) => void
 
   // UI
   activeSidebarTab: string

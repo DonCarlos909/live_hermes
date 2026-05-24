@@ -7,6 +7,8 @@ import type {
   Agent,
   MemoryNode,
   AppTask,
+  LLMModel,
+  UserSettings,
 } from './types'
 
 const DEMO_AGENTS: Agent[] = [
@@ -31,6 +33,43 @@ const DEMO_TASKS: AppTask[] = [
   { id: 't3', title: 'Deploy particle engine', agentId: 'code', status: 'in_progress', progress: 34 },
   { id: 't4', title: 'Wait for CTF targets', agentId: 'ctf', status: 'pending', progress: 0 },
 ]
+
+const DEFAULT_SETTINGS: UserSettings = {
+  active_provider: 'ollama',
+  models: [
+    {
+      id: 'ollama-default',
+      name: 'Ollama (Local)',
+      provider: 'ollama',
+      base_url: 'http://localhost:11434',
+      model_name: 'llama3.2',
+      api_key: '',
+      context_length: 128000,
+      is_active: true,
+    },
+  ],
+  ollama_modules: [
+    { id: 'qwen-coding', name: 'Qwen 2.5 Coder', description: 'Coding & code review specialist', category: 'coding', model_name: 'qwen2.5-coder:7b', size_gb: 4.7, installed: false, recommended: true },
+    { id: 'llama-vision', name: 'Llama 3.2 Vision', description: 'Image reading & visual understanding', category: 'vision', model_name: 'llama3.2-vision:11b', size_gb: 7.8, installed: false, recommended: true },
+    { id: 'stable-diffusion', name: 'Stable Diffusion', description: 'Image generation from text prompts', category: 'image', model_name: 'stabilityai/stable-diffusion-xl-base-1.0', size_gb: 6.5, installed: false, recommended: false },
+    { id: 'llama-chat', name: 'Llama 3.2 Chat', description: 'General purpose conversation', category: 'chat', model_name: 'llama3.2:3b', size_gb: 2.0, installed: false, recommended: true },
+    { id: 'deepseek-r1', name: 'DeepSeek R1', description: 'Advanced reasoning & problem solving', category: 'reasoning', model_name: 'deepseek-r1:7b', size_gb: 4.7, installed: false, recommended: true },
+    { id: 'nomic-embed', name: 'Nomic Embed', description: 'Text embeddings for search & memory', category: 'embedding', model_name: 'nomic-embed-text', size_gb: 0.27, installed: false, recommended: true },
+    { id: 'whisper', name: 'Whisper', description: 'Speech-to-text transcription', category: 'audio', model_name: 'whisper', size_gb: 1.5, installed: false, recommended: false },
+    { id: 'codellama', name: 'Code Llama', description: 'Alternative coding model', category: 'coding', model_name: 'codellama:13b', size_gb: 7.4, installed: false, recommended: false },
+    { id: 'bakllava', name: 'BakLLaVA', description: 'Multi-modal vision + language', category: 'vision', model_name: 'bakllava', size_gb: 4.7, installed: false, recommended: false },
+    { id: 'mixtral', name: 'Mixtral 8x7B', description: 'Mixture-of-experts general model', category: 'chat', model_name: 'mixtral:8x7b', size_gb: 26.0, installed: false, recommended: false },
+  ],
+  hermes_docker: {
+    docker_url: 'http://localhost:11434',
+    api_key: '',
+    port: 11434,
+    connected: false,
+  },
+  audio_enabled: false,
+  animations_enabled: true,
+  theme: 'cyber',
+}
 
 export const useHermesStore = create<HermesState>((set) => ({
   // Avatar
@@ -113,6 +152,33 @@ export const useHermesStore = create<HermesState>((set) => ({
   // Connection
   isConnected: true,
   setConnected: (v) => set({ isConnected: v }),
+
+  // Settings
+  settings: DEFAULT_SETTINGS,
+  updateSettings: (updates) =>
+    set((s) => ({ settings: { ...s.settings, ...updates } })),
+  addModel: (model) =>
+    set((s) => ({ settings: { ...s.settings, models: [...s.settings.models, model] } })),
+  removeModel: (id) =>
+    set((s) => ({
+      settings: { ...s.settings, models: s.settings.models.filter((m) => m.id !== id) },
+    })),
+  setActiveModel: (id) =>
+    set((s) => ({
+      settings: {
+        ...s.settings,
+        models: s.settings.models.map((m) => ({ ...m, is_active: m.id === id })),
+      },
+    })),
+  updateOllamaModule: (id, installed) =>
+    set((s) => ({
+      settings: {
+        ...s.settings,
+        ollama_modules: s.settings.ollama_modules.map((m) =>
+          m.id === id ? { ...m, installed } : m
+        ),
+      },
+    })),
 
   // UI
   activeSidebarTab: 'agents',
