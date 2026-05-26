@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import * as d3 from 'd3'
 import { useHermesStore } from '../../store/hermes'

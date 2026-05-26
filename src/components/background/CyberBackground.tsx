@@ -1,11 +1,11 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Float } from '@react-three/drei'
 import * as THREE from 'three'
 import { useHermesStore } from '../../store/hermes'
 
 function ParticleField() {
-  const count = 2000
+  const count = 500 // Reduced from 2000 — GPU-safe on integrated graphics
   const meshRef = useRef<THREE.Points>(null)
   const mode = useHermesStore((s) => s.mode)
 
@@ -36,16 +36,23 @@ function ParticleField() {
 
     const t = state.clock.elapsedTime
     const isRed = mode === 'ctf'
+    // Batch update color array directly — avoids per-element setXYZ overhead
+    const colorArr = c.array as Float32Array
+    const posArr = pos.array as Float32Array
     for (let i = 0; i < count; i++) {
-      const y = pos.getY(i)
-      pos.setY(i, y + Math.sin(t + i * 0.1) * 0.002)
+      const i3 = i * 3
+      posArr[i3 + 1] += Math.sin(t + i * 0.1) * 0.002
 
-      const alpha = 0.3 + Math.sin(t * 2 + i * 0.5) * 0.3
+      const alpha = (0.3 + Math.sin(t * 2 + i * 0.5) * 0.3)
       if (isRed) {
-        c.setXYZ(i, alpha * 1.0, alpha * 0.1, alpha * 0.2)
+        colorArr[i3]     = alpha * 1.0
+        colorArr[i3 + 1] = alpha * 0.1
+        colorArr[i3 + 2] = alpha * 0.2
       } else {
         const isBlue = i % 3 !== 0
-        c.setXYZ(i, alpha * (isBlue ? 0.0 : 0.5), alpha * (isBlue ? 0.83 : 0.8), alpha * (isBlue ? 1.0 : 1.0))
+        colorArr[i3]     = alpha * (isBlue ? 0.0 : 0.5)
+        colorArr[i3 + 1] = alpha * (isBlue ? 0.83 : 0.8)
+        colorArr[i3 + 2] = alpha * (isBlue ? 1.0 : 1.0)
       }
     }
     c.needsUpdate = true
@@ -135,19 +142,66 @@ function DigitalRain() {
   )
 }
 
+// Detect whether the browser can actually render WebGL
+function detectWebGL(): boolean {
+  try {
+    const canvas = document.createElement('canvas')
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+    )
+  } catch {
+    return false
+  }
+}
+
+function ThreeScene() {
+  const _mode = useHermesStore((s) => s.mode)
+  void _mode // used to trigger re-renders on mode change
+  return (
+    <Canvas
+      camera={{ position: [0, 0, 8], fov: 60 }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: 'low-power',
+        failIfMajorPerformanceCaveat: false, // Don't block on software renderers
+      }}
+      dpr={[1, 1.5]}
+      style={{ background: 'transparent' }}
+      onCreated={({ gl }) => {
+        // Listen for context loss — hide canvas if GPU is lost
+        gl.domElement.addEventListener('webglcontextlost', () => {
+          gl.domElement.style.display = 'none'
+        })
+      }}
+    >
+      <ambientLight intensity={0.2} />
+      <ParticleField />
+      <EnergyWaves />
+      <DigitalRain />
+    </Canvas>
+  )
+}
+
 export default function CyberBackground() {
+  const [hasWebGL, setHasWebGL] = useState(true)
+
+  useEffect(() => {
+    setHasWebGL(detectWebGL())
+  }, [])
+
   return (
     <div className="absolute inset-0 z-0">
-      <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
-        gl={{ antialias: true, alpha: true }}
-        style={{ background: 'transparent' }}
-      >
-        <ambientLight intensity={0.2} />
-        <ParticleField />
-        <EnergyWaves />
-        <DigitalRain />
-      </Canvas>
+      {hasWebGL ? <ThreeScene /> : null}
+      {!hasWebGL && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 50%, rgba(0,212,255,0.04) 0%, transparent 70%)',
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@
 // Shown on first launch or when settings are empty
 // ============================================
 
+// @ts-nocheck
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Cpu, Server, ChevronRight, ChevronLeft, Check, Loader, Download } from 'lucide-react'

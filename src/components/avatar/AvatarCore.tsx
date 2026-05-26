@@ -123,7 +123,7 @@ export default function AvatarCore() {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!ctx) return // Canvas not supported — skip, the img tag still renders
 
     const resize = () => {
       const parent = canvas.parentElement
