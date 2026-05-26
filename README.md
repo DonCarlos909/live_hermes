@@ -4,7 +4,7 @@
 
 A cyberpunk-themed AI companion desktop app with an animated avatar, agent orchestration, holographic interface, and 3D particle backgrounds — built with Tauri 2, React 18, and Three.js.
 
-![HERMES](https://img.shields.io/badge/HERMES-v1.0-00d4ff?style=flat-square)
+![HERMES](https://img.shields.io/badge/HERMES-v1.0.1-00d4ff?style=flat-square)
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-22d3ee?style=flat-square)
 ![React](https://img.shields.io/badge/React-18-00d4ff?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-22d3ee?style=flat-square)
@@ -16,7 +16,7 @@ A cyberpunk-themed AI companion desktop app with an animated avatar, agent orche
 
 ### Windows (One-Click)
 
-1. **Download** → [Hermes_1.0.0_x64-setup.exe](https://github.com/DonCarlos909/live_hermes/releases/download/v1.0.0/Hermes_1.0.0_x64-setup.exe) (4.9 MB)
+1. **Download** → [Hermes_1.0.1_x64-setup.exe](https://github.com/DonCarlos909/live_hermes/releases/download/v1.0.1/Hermes_1.0.1_x64-setup.exe) (4.9 MB)
 2. **Run** the installer
 3. **Open** Hermes from Start menu
 
@@ -48,7 +48,7 @@ npm run tauri build
 | Feature | Description |
 |---------|-------------|
 | 🎭 **Animated Avatar** | AI face with idle / speaking / thinking / listening states, glow ring, floating particles |
-| 🌌 **3D Background** | 2000+ floating particles, energy waves, digital rain via Three.js |
+| 🌌 **3D Background** | 500 floating particles, energy waves, digital rain via Three.js (GPU-safe, WebGL fallback) |
 | 💬 **Streaming Chat** | Typewriter text effect, glowing cursor, 6 chat modes |
 | 🕸️ **Agent Network** | D3.js force-directed graph — agents, task counts, live connections |
 | 🎨 **Mode System** | Idle, Analysis, CTF, Coding, Voice — each with a unique visual theme |
