@@ -1,111 +1,99 @@
 @import "tailwindcss";
 
 /* ============================================
-   HERMES CYBERNETIC THEME — v3.0 Refined
-   Deep blacks · Neon cyan · Tactical grid
+   HERMES CYBERNETIC THEME — v3.0 Final
+   Amber primary · Cyan secondary · Deep void
+   Exact color tokens from ROV spec
    ============================================ */
 
 :root {
   /* ── Base Layers ── */
-  --bg-void:       #020508;
-  --bg-panel:      #060b14;
-  --bg-surface:    #091018;
-  --bg-elevated:   #0c1520;
-  --bg-input:      #080e16;
+  --bg-void:       #050810;
+  --bg-panel:      #080e1a;
+  --bg-surface:    #0c1526;
+  --bg-elevated:   #0e1a2e;
+  --bg-input:      #0a1220;
 
   /* ── Borders ── */
-  --border-panel:  #0e1e30;
-  --border-glow:   rgba(0, 220, 255, 0.18);
-  --border-active: rgba(0, 220, 255, 0.35);
+  --border-panel:  #101e32;
+  --border-glow:   rgba(0, 229, 255, 0.15);
+  --border-active: rgba(0, 229, 255, 0.30);
 
-  /* ── Cyan Palette ── */
-  --cyan:          #00dcff;
-  --cyan-bright:   #00eeff;
-  --cyan-dim:      #007a94;
-  --cyan-mid:      #009dbb;
-  --cyan-glow:     rgba(0, 220, 255, 0.16);
-  --cyan-glow-strong: rgba(0, 220, 255, 0.28);
-  --cyan-text:     #7ee8fa;
+  /* ── Amber (Primary Accent) ── */
+  --amber-primary: #ffaa00;
+  --amber-glow:    rgba(255, 170, 0, 0.25);
+  --amber-dim:     #cc8800;
+  --amber-text:    #ffcc66;
+
+  /* ── Cyan (Secondary Accent) ── */
+  --cyan-secondary:#00e5ff;
+  --cyan-dim:      #0099aa;
+  --cyan-mid:      #00bbcc;
+  --cyan-glow:     rgba(0, 229, 255, 0.15);
+  --cyan-glow-strong: rgba(0, 229, 255, 0.28);
+  --cyan-text:     #66e8ff;
 
   /* ── Status ── */
-  --green:         #00e876;
-  --green-glow:    rgba(0, 232, 118, 0.35);
-  --amber:         #f0a020;
-  --amber-glow:    rgba(240, 160, 32, 0.3);
-  --red:           #ff2d55;
-  --red-glow:      rgba(255, 45, 85, 0.3);
+  --green-online:  #39ff6a;
+  --green-glow:    rgba(57, 255, 106, 0.3);
+  --red-alert:     #ff3b5c;
+  --red-glow:      rgba(255, 59, 92, 0.25);
   --violet:        #8b5cf6;
-  --violet-glow:   rgba(139, 92, 246, 0.25);
+  --violet-glow:   rgba(139, 92, 246, 0.2);
 
   /* ── Text ── */
-  --text-0:        #e4f0ff;
-  --text-1:        #8aaccc;
-  --text-2:        #3d6080;
-  --text-3:        #1e3a52;
+  --text-primary:   #e0f4ff;
+  --text-secondary: #5a8fa8;
+  --text-amber:     #ffcc66;
+  --text-dim:       #2d4a5e;
 
   /* ── Fonts ── */
   --font-display: 'Orbitron', 'Segoe UI', sans-serif;
   --font-mono:    'Share Tech Mono', 'Cascadia Code', 'Consolas', monospace;
 
   /* ── Spacing ── */
-  --radius-sm:     3px;
-  --radius-md:     6px;
-  --radius-lg:     8px;
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
 }
 
 /* ============================================
    RESET
    ============================================ */
-*, *::before, *::after {
-  margin: 0; padding: 0; box-sizing: border-box;
-}
-html, body, #root {
-  height: 100%; width: 100%; overflow: hidden;
-}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #root { height: 100%; width: 100%; overflow: hidden; }
 body {
   font-family: var(--font-mono);
   background: var(--bg-void);
-  color: var(--text-0);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
 }
 
 /* ============================================
-   SCROLLBAR — Custom Cyberpunk
+   SCROLLBAR — Custom Cyberpunk Amber/Cyan
    ============================================ */
-::-webkit-scrollbar        { width: 5px; }
-::-webkit-scrollbar-track  { background: var(--bg-void); }
-::-webkit-scrollbar-thumb  {
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb {
   background: var(--cyan-dim);
   border-radius: 10px;
-  border: 1px solid var(--bg-panel);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--cyan);
-  box-shadow: 0 0 6px var(--cyan-glow);
+  background: var(--cyan-secondary);
+  box-shadow: 0 0 8px var(--cyan-glow-strong);
 }
-
-/* Firefox */
 * { scrollbar-width: thin; scrollbar-color: var(--cyan-dim) var(--bg-void); }
 
 /* ============================================
    SELECTION & FOCUS
    ============================================ */
-::selection {
-  background: rgba(0, 220, 255, 0.2);
-  color: var(--text-0);
-}
-:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 1px;
-}
+::selection { background: rgba(255, 170, 0, 0.2); color: var(--text-primary); }
+:focus-visible { outline: 2px solid var(--amber-primary); outline-offset: 1px; }
 
 /* ============================================
    PANELS
    ============================================ */
-.panel {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
-}
+.panel { background: var(--bg-panel); border: 1px solid var(--border-panel); }
 
 /* ============================================
    ANIMATIONS
@@ -119,12 +107,8 @@ body {
   50% { transform: scale(1.015); }
 }
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 8px var(--cyan-glow); }
-  50% { box-shadow: 0 0 18px var(--cyan-glow-strong); }
-}
-@keyframes scanline {
-  0%   { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0%, 100% { box-shadow: 0 0 8px var(--amber-glow); }
+  50% { box-shadow: 0 0 20px var(--amber-glow); }
 }
 @keyframes blink {
   0%, 100% { opacity: 1; }
@@ -134,11 +118,15 @@ body {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
 .animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
 .animate-breathe  { animation: breathe 4s ease-in-out infinite; }
 .animate-glow     { animation: glow-pulse 2s ease-in-out infinite; }
-.animate-fade-up  { animation: fade-up 0.2s ease-out; }
-.cursor-blink     { animation: blink 0.8s step-end infinite; color: var(--cyan); }
+.animate-fade-up  { animation: fade-up 0.25s ease-out; }
+.cursor-blink     { animation: blink 0.8s step-end infinite; color: var(--amber-primary); }
 
 /* ============================================
    INPUT
@@ -147,17 +135,17 @@ body {
   background: var(--bg-input);
   border: 1px solid var(--border-panel);
   border-radius: var(--radius-sm);
-  color: var(--text-0);
+  color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: 13px;
   padding: 10px 14px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.cmd-input::placeholder { color: var(--text-2); }
+.cmd-input::placeholder { color: var(--text-dim); }
 .cmd-input:focus {
   outline: none;
-  border-color: var(--cyan-dim);
-  box-shadow: 0 0 10px var(--cyan-glow);
+  border-color: var(--amber-dim);
+  box-shadow: 0 0 10px var(--amber-glow);
 }
 
 /* ============================================
@@ -165,7 +153,7 @@ body {
    ============================================ */
 .bar-track {
   height: 3px;
-  background: rgba(0, 220, 255, 0.06);
+  background: rgba(0, 229, 255, 0.06);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -173,8 +161,11 @@ body {
   height: 100%;
   border-radius: 2px;
   transition: width 0.6s ease-in-out;
-  background: linear-gradient(90deg, var(--cyan-dim), var(--cyan));
+  background: linear-gradient(90deg, var(--amber-dim), var(--amber-primary));
+}
+.bar-fill.cyan {
+  background: linear-gradient(90deg, var(--cyan-dim), var(--cyan-secondary));
 }
 .bar-fill.red {
-  background: linear-gradient(90deg, #8b1a2e, var(--red));
+  background: linear-gradient(90deg, #5a1a28, var(--red-alert));
 }

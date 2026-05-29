@@ -13,10 +13,10 @@ const STATE_LABELS: Record<AvatarState, string> = {
 }
 
 const STATE_COLORS: Record<string, string> = {
-  idle: '#00e8ff',
-  speaking: '#00e8ff',
+  idle: '#ffaa00',
+  speaking: '#ffaa00',
   thinking: '#e8a020',
-  listening: '#00e8ff',
+  listening: '#00e5ff',
 }
 
 export default function AvatarCore() {

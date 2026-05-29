@@ -2,58 +2,35 @@ import AvatarCore from '../avatar/AvatarCore'
 
 export default function MainArea() {
   return (
-    <main
-      style={{
-        flex: 1,
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        minWidth: 0,
-      }}
-    >
-      {/* Background gradient */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          background:
-            'radial-gradient(ellipse at 50% 40%, #0a1a30 0%, #040810 100%)',
-          zIndex: 0,
-        }}
-      />
+    <main style={{
+      flex: 1, position: 'relative', display: 'flex',
+      alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden', minWidth: 0,
+    }}>
+      {/* Starfield — deeper space */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        background: 'radial-gradient(ellipse at 50% 45%, #0c1a32 0%, #050810 70%)',
+      }} />
+
+      {/* Subtle grid overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0, opacity: 0.03,
+        backgroundImage: 'linear-gradient(rgba(255,170,0,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,170,0,0.3) 1px, transparent 1px)',
+        backgroundSize: '40px 40px',
+      }} />
 
       {/* Avatar */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
-          width: '100%',
-          height: '100%',
-          maxWidth: 480,
-          maxHeight: 480,
-        }}
-      >
+      <div style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%', maxWidth: 460, maxHeight: 460 }}>
         <AvatarCore />
       </div>
 
-      {/* Ambient glow */}
-      <div
-        style={{
-          position: 'absolute',
-          zIndex: 1,
-          width: 350,
-          height: 350,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(0,232,255,0.04) 0%, transparent 70%)',
-          filter: 'blur(40px)',
-          pointerEvents: 'none',
-        }}
-      />
+      {/* Ambient glow — amber tint */}
+      <div style={{
+        position: 'absolute', zIndex: 1, width: 320, height: 320, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,170,0,0.04) 0%, transparent 70%)',
+        filter: 'blur(50px)', pointerEvents: 'none',
+      }} />
     </main>
   )
 }

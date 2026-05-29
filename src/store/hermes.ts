@@ -87,7 +87,7 @@ export const useHermesStore = create<HermesState>((set) => ({
     {
       id: 'sys-1',
       role: 'system',
-      content: 'HERMES v2.0 initialized. All systems nominal.',
+      content: 'HERMES v2.0 online. Awaiting command.',
       timestamp: Date.now() - 60000,
       mode: 'chat',
     },

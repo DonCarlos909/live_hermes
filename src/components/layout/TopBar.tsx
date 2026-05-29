@@ -15,159 +15,68 @@ export default function TopBar() {
 
   const activeAgents = agents.filter((a) => a.status === 'active' || a.status === 'working')
 
-  const modeColors: Record<string, string> = {
-    idle: '#00e8ff',
-    analysis: '#00e8ff',
-    ctf: '#ff2244',
-    coding: '#00c8e8',
-    voice: '#8b5cf6',
+  const modeConfig: Record<string, { color: string; label: string }> = {
+    idle:     { color: 'var(--amber-primary)', label: 'IDLE' },
+    analysis: { color: 'var(--amber-primary)', label: 'ANALYSIS' },
+    ctf:      { color: 'var(--red-alert)',     label: 'CTF' },
+    coding:   { color: 'var(--cyan-secondary)', label: 'CODING' },
+    voice:    { color: 'var(--violet)',         label: 'VOICE' },
   }
-
-  const modeColor = modeColors[mode] ?? '#00e8ff'
+  const mc = modeConfig[mode] ?? modeConfig.idle
 
   return (
-    <header
-      style={{
-        height: 48,
-        background: 'var(--bg-panel)',
-        borderBottom: '2px solid var(--border-panel)',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 20px',
-        gap: 16,
-        fontFamily: 'var(--font-mono)',
-        flexShrink: 0,
-        zIndex: 30,
-      }}
-    >
-      {/* Left: Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ color: 'var(--cyan-primary)', fontSize: 18, fontWeight: 700, fontFamily: 'var(--font-display)' }}>
-          &#8801;
-        </span>
-        <span
-          style={{
-            color: 'var(--cyan-primary)',
-            fontSize: 22,
-            fontWeight: 900,
-            fontFamily: 'var(--font-display)',
-            textShadow: '0 0 16px #00e8ff',
-            letterSpacing: '0.12em',
-          }}
-        >
-          HERMES
-        </span>
-        <span style={{ color: 'var(--text-secondary)', fontSize: 12, fontFamily: 'var(--font-mono)' }}>
-          v2.0
-        </span>
+    <header style={{
+      height: 46,
+      background: 'var(--bg-panel)',
+      borderBottom: '1px solid var(--border-panel)',
+      display: 'flex', alignItems: 'center', padding: '0 16px',
+      gap: 14, flexShrink: 0, zIndex: 30,
+    }}>
+      {/* Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ color: 'var(--amber-primary)', fontSize: 16, fontFamily: 'var(--font-display)', textShadow: '0 0 12px var(--amber-glow)' }}>&#8801;</span>
+        <span style={{ color: 'var(--amber-primary)', fontSize: 20, fontWeight: 900, fontFamily: 'var(--font-display)', textShadow: '0 0 16px var(--amber-glow)', letterSpacing: '0.12em' }}>HERMES</span>
+        <span style={{ color: 'var(--text-dim)', fontSize: 10, fontFamily: 'var(--font-mono)' }}>v2.0</span>
       </div>
 
-      {/* Spacer */}
       <div style={{ flex: 1 }} />
 
-      {/* Center: Status + Mode */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        {/* Online dot */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <div
-            style={{
-              width: 7,
-              height: 7,
-              borderRadius: '50%',
-              background: isConnected ? 'var(--green-online)' : 'var(--red-bar)',
-              boxShadow: isConnected ? '0 0 8px rgba(0,255,85,0.5)' : '0 0 8px rgba(255,34,68,0.5)',
-              animation: 'pulse-dot 2s ease-in-out infinite',
-            }}
-          />
-          <span
-            style={{
-              fontSize: 12,
-              fontFamily: 'var(--font-display)',
-              color: isConnected ? 'var(--green-online)' : 'var(--red-bar)',
-              fontWeight: 700,
-            }}
-          >
+      {/* Center */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: isConnected ? 'var(--green-online)' : 'var(--red-alert)', boxShadow: isConnected ? '0 0 8px var(--green-glow)' : '0 0 8px var(--red-glow)', animation: 'pulse-dot 2s infinite' }} />
+          <span style={{ fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 700, color: isConnected ? 'var(--green-online)' : 'var(--red-alert)' }}>
             {isConnected ? 'ONLINE' : 'OFFLINE'}
           </span>
         </div>
-
-        {/* Mode badge */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '3px 12px',
-            border: '1px solid',
-            borderColor: modeColor + '44',
-            borderRadius: 4,
-            background: modeColor + '0a',
-          }}
-        >
-          <Shield size={11} style={{ color: modeColor }} />
-          <span
-            style={{
-              fontSize: 12,
-              fontFamily: 'var(--font-display)',
-              color: 'var(--text-primary)',
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-            }}
-          >
-            {mode === 'idle' ? 'IDLE MODE' : mode.toUpperCase() + ' MODE'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 10px', border: `1px solid ${mc.color}33`, borderRadius: 'var(--radius-sm)', background: `${mc.color}0d` }}>
+          <Shield size={10} style={{ color: mc.color }} />
+          <span style={{ fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.06em' }}>
+            {mc.label} MODE
           </span>
         </div>
       </div>
 
-      {/* Spacer */}
       <div style={{ flex: 1 }} />
 
-      {/* Right: Agent pills + Time */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ fontSize: 12, fontFamily: 'var(--font-display)', color: 'var(--cyan-primary)' }}>
-          AGENTS:
-        </span>
+      {/* Right */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', color: 'var(--amber-primary)', letterSpacing: '0.06em' }}>AGENTS:</span>
         {activeAgents.map((agent, i) => (
-          <span key={agent.id} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            {i > 0 && <span style={{ color: 'var(--text-secondary)', fontSize: 10, marginRight: 2 }}>|</span>}
-            <span
-              style={{
-                fontSize: 11,
-                fontFamily: 'var(--font-mono)',
-                color: agent.status === 'working' ? 'var(--cyan-primary)' : 'var(--cyan-mid)',
-                letterSpacing: '0.06em',
-              }}
-            >
+          <span key={agent.id} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            {i > 0 && <span style={{ color: 'var(--text-dim)', fontSize: 9, marginRight: 1 }}>|</span>}
+            <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: agent.status === 'working' ? 'var(--amber-text)' : 'var(--cyan-mid)' }}>
               {agent.name.toUpperCase()}
             </span>
           </span>
         ))}
-        <span
-          style={{
-            fontSize: 11,
-            fontFamily: 'var(--font-mono)',
-            color: 'var(--text-secondary)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-          }}
-        >
-          + VOICE <ChevronDown size={10} />
+        <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-dim)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2 }}>
+          + VOICE <ChevronDown size={9} />
         </span>
-
-        <div style={{ width: 1, height: 16, background: 'var(--border-panel)', margin: '0 4px' }} />
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <Clock size={11} style={{ color: 'var(--text-secondary)' }} />
-          <span
-            style={{
-              fontSize: 11,
-              fontFamily: 'var(--font-mono)',
-              color: 'var(--text-secondary)',
-              fontVariantNumeric: 'tabular-nums',
-            }}
-          >
+        <div style={{ width: 1, height: 14, background: 'var(--border-panel)', margin: '0 4px' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Clock size={10} style={{ color: 'var(--text-dim)' }} />
+          <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
             {time.toLocaleTimeString('en-US', { hour12: false })}
           </span>
         </div>
