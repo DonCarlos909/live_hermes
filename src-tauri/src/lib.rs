@@ -277,6 +277,51 @@ fn start_hermes_container(
     }
 }
 
+/// Check for the latest release version from GitHub
+#[command]
+fn check_update(current_version: String) -> Result<PullResult, String> {
+    let client = reqwest::blocking::Client::builder()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()
+        .map_err(|e| format!("HTTP error: {}", e))?;
+
+    let url = "https://api.github.com/repos/DonCarlos909/live_hermes/releases/latest";
+    let resp: serde_json::Value = client
+        .get(url)
+        .header("User-Agent", "hermes-updater")
+        .send()
+        .map_err(|e| format!("Failed to check updates: {}", e))?
+        .json()
+        .map_err(|e| format!("Failed to parse response: {}", e))?;
+
+    let latest = resp["tag_name"].as_str().unwrap_or("unknown");
+    let current = current_version.trim_start_matches('v');
+    let latest_clean = latest.trim_start_matches('v');
+
+    if latest_clean > current {
+        let download_url = resp["assets"]
+            .as_array()
+            .and_then(|a| a.iter().find(|a| {
+                a["name"].as_str().map_or(false, |n| n.ends_with("-setup.exe"))
+            }))
+            .and_then(|a| a["browser_download_url"].as_str())
+            .unwrap_or("");
+
+        Ok(PullResult {
+            success: true,
+            message: format!(
+                "Update available: {} → {}\nDownload: {}",
+                current, latest, download_url
+            ),
+        })
+    } else {
+        Ok(PullResult {
+            success: false,
+            message: format!("You're on the latest version ({})", current),
+        })
+    }
+}
+
 // ============================================
 // Main entry
 // ============================================
@@ -295,6 +340,7 @@ pub fn run() {
             check_docker_running,
             list_docker_containers,
             start_hermes_container,
+            check_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Hermes");
