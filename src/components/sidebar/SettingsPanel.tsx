@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Settings, Cpu, Wifi, WifiOff, Check, Download, Trash2,
@@ -400,118 +400,162 @@ function OllamaModulesPanel() {
 }
 
 // ============================================
-// Hermes Docker Connection Panel
+// Hermes Agent Connection Panel
 // ============================================
 function HermesConnectionPanel() {
-  const settings = useHermesStore((s) => s.settings)
+  const settings       = useHermesStore((s) => s.settings)
   const updateSettings = useHermesStore((s) => s.updateSettings)
   const [testing, setTesting] = useState(false)
+  const [localKey, setLocalKey] = useState(settings.hermes_docker.api_key)
+  const [localUrl, setLocalUrl] = useState(settings.hermes_docker.docker_url)
   const hermes = settings.hermes_docker
+
+  // Keep local state in sync
+  useEffect(() => { setLocalKey(hermes.api_key) }, [hermes.api_key])
+  useEffect(() => { setLocalUrl(hermes.docker_url) }, [hermes.docker_url])
 
   const testHermes = async () => {
     setTesting(true)
     try {
-      const res = await fetch(`${hermes.docker_url}/api/tags`, { signal: AbortSignal.timeout(5000) })
-      updateSettings({
-        hermes_docker: { ...hermes, connected: res.ok },
+      const headers: Record<string, string> = {}
+      if (localKey) headers['Authorization'] = `Bearer ${localKey}`
+      const res = await fetch(`${localUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...headers },
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'ping' }] }),
+        signal: AbortSignal.timeout(8000),
       })
-      if (res.ok) {
-        useHermesStore.getState().setConnected(true)
-      }
+      updateSettings({ hermes_docker: { ...hermes, docker_url: localUrl, api_key: localKey, connected: res.ok } })
+      useHermesStore.getState().setConnected(res.ok)
     } catch {
-      updateSettings({
-        hermes_docker: { ...hermes, connected: false },
-      })
+      updateSettings({ hermes_docker: { ...hermes, docker_url: localUrl, api_key: localKey, connected: false } })
       useHermesStore.getState().setConnected(false)
     }
     setTesting(false)
   }
 
+  const generateKey = () => {
+    const k = 'hmk_' + Array.from(crypto.getRandomValues(new Uint8Array(16)))
+      .map(b => b.toString(16).padStart(2, '0')).join('')
+    setLocalKey(k)
+  }
+
+  const isConnected = hermes.connected
+
   return (
-    <div className="flex flex-col gap-4 p-3 h-full overflow-y-auto scrollbar-thin">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 12, height: '100%', overflowY: 'auto' }}>
+      <h3 style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-0)', letterSpacing: '0.12em' }}>
+        HERMES AGENT CONNECTION
+      </h3>
+      <p style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-2)', lineHeight: 1.5 }}>
+        Connect to Hermes Agent for real AI responses.
+      </p>
+
+      {/* Status card */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
+        borderRadius: 'var(--radius-md)',
+        border: `1px solid ${isConnected ? 'var(--green)' + '44' : 'var(--border-panel)'}`,
+        background: isConnected ? 'rgba(0,232,118,0.04)' : 'var(--bg-surface)',
+      }}>
+        <div style={{
+          width: 8, height: 8, borderRadius: '50%',
+          background: isConnected ? 'var(--green)' : 'var(--red)',
+          boxShadow: isConnected ? '0 0 8px var(--green-glow)' : '0 0 8px var(--red-glow)',
+          animation: 'pulse-dot 2s infinite',
+        }} />
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-0)', fontWeight: 600 }}>
+            {isConnected ? 'Connected to Hermes Agent' : 'Not Connected'}
+          </div>
+          <div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: 'var(--text-2)' }}>{localUrl}</div>
+        </div>
+        <span style={{
+          fontSize: 9, fontFamily: 'var(--font-display)', fontWeight: 700,
+          color: isConnected ? 'var(--green)' : 'var(--red)',
+        }}>
+          {isConnected ? 'LIVE' : 'OFFLINE'}
+        </span>
+      </div>
+
+      {/* API Key */}
       <div>
-        <h3 className="text-[10px] font-mono tracking-wider text-white/50 mb-3">HERMES DOCKER CONNECTION</h3>
-        <p className="text-[9px] font-mono text-white/30 mb-4">
-          Connect to your Hermes Agent running in Docker. This enables real AI responses from your agents.
+        <label style={{ fontSize: 8, fontFamily: 'var(--font-mono)', color: 'var(--text-2)', display: 'block', marginBottom: 4 }}>
+          API KEY (from Hermes Agent)
+        </label>
+        <div style={{ display: 'flex', gap: 4 }}>
+          <input
+            type="text"
+            value={localKey}
+            onChange={(e) => setLocalKey(e.target.value)}
+            placeholder="Paste your Hermes API key here..."
+            style={{
+              flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border-panel)',
+              borderRadius: 'var(--radius-sm)', padding: '6px 10px',
+              fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-0)', outline: 'none',
+            }}
+          />
+          <button onClick={generateKey} title="Generate new key" style={{
+            background: 'var(--bg-elevated)', border: '1px solid var(--border-panel)',
+            borderRadius: 'var(--radius-sm)', padding: '4px 8px',
+            color: 'var(--cyan)', fontSize: 9, fontFamily: 'var(--font-mono)',
+            cursor: 'pointer', whiteSpace: 'nowrap',
+          }}>
+            GENERATE
+          </button>
+        </div>
+        <p style={{ fontSize: 8, fontFamily: 'var(--font-mono)', color: 'var(--text-3)', marginTop: 4 }}>
+          Generate a key and give it to Hermes Agent to authorize this app.
         </p>
       </div>
 
-      <div className="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-white/[0.02]">
-        {hermes.connected ? (
-          <Wifi size={16} className="text-[#22d3ee]" />
-        ) : (
-          <WifiOff size={16} className="text-[#ff2d55]" />
-        )}
-        <div className="flex-1">
-          <div className="text-[10px] font-mono text-[#f0f0ff]">
-            {hermes.connected ? 'Connected to Hermes Docker' : 'Not Connected'}
-          </div>
-          <div className="text-[8px] font-mono text-white/30">{hermes.docker_url}</div>
-        </div>
-        <StatusDot connected={hermes.connected} label={hermes.connected ? 'ONLINE' : 'OFFLINE'} />
+      {/* Agent URL */}
+      <div>
+        <label style={{ fontSize: 8, fontFamily: 'var(--font-mono)', color: 'var(--text-2)', display: 'block', marginBottom: 4 }}>
+          AGENT URL
+        </label>
+        <input
+          type="text"
+          value={localUrl}
+          onChange={(e) => setLocalUrl(e.target.value)}
+          placeholder="https://your-hermes-agent.com/api"
+          style={{
+            width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-panel)',
+            borderRadius: 'var(--radius-sm)', padding: '6px 10px',
+            fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-0)', outline: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <div>
-          <label className="text-[8px] font-mono text-white/30 block mb-0.5">Docker URL</label>
-          <input
-            type="text"
-            value={hermes.docker_url}
-            onChange={(e) =>
-              updateSettings({
-                hermes_docker: { ...hermes, docker_url: e.target.value, connected: false },
-              })
-            }
-            placeholder="http://localhost:11434"
-            className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-[10px] font-mono text-[#f0f0ff] outline-none focus:border-[#00d4ff33] placeholder:text-white/15"
-          />
-        </div>
-        <div>
-          <label className="text-[8px] font-mono text-white/30 block mb-0.5">Port</label>
-          <input
-            type="number"
-            value={hermes.port}
-            onChange={(e) =>
-              updateSettings({
-                hermes_docker: { ...hermes, port: parseInt(e.target.value) || 11434, connected: false },
-              })
-            }
-            className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-[10px] font-mono text-[#f0f0ff] outline-none focus:border-[#00d4ff33]"
-          />
-        </div>
-        <div>
-          <label className="text-[8px] font-mono text-white/30 block mb-0.5">API Key (if required)</label>
-          <input
-            type="password"
-            value={hermes.api_key}
-            onChange={(e) =>
-              updateSettings({
-                hermes_docker: { ...hermes, api_key: e.target.value },
-              })
-            }
-            placeholder="Optional"
-            className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-[10px] font-mono text-[#f0f0ff] outline-none focus:border-[#00d4ff33] placeholder:text-white/15"
-          />
-        </div>
-      </div>
-
+      {/* Test button */}
       <button
         onClick={testHermes}
         disabled={testing}
-        className="flex items-center justify-center gap-2 text-[10px] font-mono px-4 py-2 rounded-lg border border-[#00d4ff33] text-[#00d4ff] hover:bg-[#00d4ff11] transition-colors disabled:opacity-50"
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          padding: '8px', borderRadius: 'var(--radius-sm)',
+          border: `1px solid ${'var(--cyan)'}33`,
+          background: testing ? 'transparent' : 'var(--cyan-glow)',
+          color: 'var(--cyan)', fontSize: 10, fontFamily: 'var(--font-mono)', fontWeight: 700,
+          cursor: 'pointer', transition: 'background 0.2s',
+        }}
       >
-        {testing ? <Loader size={10} className="animate-spin" /> : <Wifi size={10} />}
-        {testing ? 'TESTING...' : 'TEST CONNECTION'}
+        {testing ? <><span className="cursor-blink">TESTING...</span></> : 'TEST CONNECTION'}
       </button>
 
-      <div className="mt-2 p-3 rounded-lg border border-white/5 bg-white/[0.02]">
-        <h4 className="text-[9px] font-mono text-white/40 mb-2">SETUP INSTRUCTIONS</h4>
-        <ol className="text-[8px] font-mono text-white/25 space-y-1 list-decimal list-inside">
-          <li>Ensure Docker Desktop is running on your PC</li>
-          <li>Hermes Agent container should be active</li>
-          <li>Default URL: <span className="text-[#00d4ff]">http://localhost:11434</span></li>
-          <li>Click TEST CONNECTION to verify</li>
-          <li>Once connected, chat will use real Hermes AI</li>
+      {/* How it works */}
+      <div style={{
+        padding: 10, borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--border-panel)', background: 'var(--bg-surface)',
+      }}>
+        <h4 style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: 'var(--text-1)', marginBottom: 6 }}>HOW IT WORKS</h4>
+        <ol style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: 'var(--text-2)', paddingLeft: 14, lineHeight: 1.7 }}>
+          <li>Click <span style={{ color: 'var(--cyan)' }}>GENERATE</span> to create an API key</li>
+          <li>Give this key to Hermes Agent (via Discord or setup)</li>
+          <li>Hermes Agent registers this app as authorized</li>
+          <li>Click <span style={{ color: 'var(--cyan)' }}>TEST CONNECTION</span> to verify</li>
+          <li>Chat now uses real Hermes AI responses</li>
         </ol>
       </div>
     </div>

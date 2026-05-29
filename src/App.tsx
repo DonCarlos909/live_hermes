@@ -11,9 +11,8 @@ import ModeSystem from './components/mode/ModeSystem'
 export default function App() {
   const setAvatarState = useHermesStore((s) => s.setAvatarState)
 
-  // Demo: cycle avatar states
   useEffect(() => {
-    const states = ['idle', 'thinking', 'speaking', 'listening'] as const
+    const states: Array<'idle' | 'thinking' | 'speaking' | 'listening'> = ['idle', 'thinking', 'speaking', 'listening']
     let idx = 0
     const interval = setInterval(() => {
       idx = (idx + 1) % states.length
@@ -30,37 +29,42 @@ export default function App() {
         display: 'flex',
         flexDirection: 'column',
         background: 'var(--bg-void)',
-        color: 'var(--text-primary)',
+        color: 'var(--text-0)',
         overflow: 'hidden',
         fontFamily: 'var(--font-mono)',
       }}
     >
-      {/* Holographic overlay effects */}
       <HologramEffects />
-
-      {/* Mode system overlays */}
       <ModeSystem />
 
-      {/* Zone 1: Topbar */}
+      {/* Topbar — fixed height */}
       <TopBar />
 
-      {/* Zone 2-4: Main content row */}
-      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-        {/* Zone 2: Left Panel */}
+      {/* Main row — fills remaining height */}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        {/* Left sidebar */}
         <LeftPanel />
 
-        {/* Zone 3-4: Center column */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          {/* Zone 4: Avatar core */}
-          <MainArea />
+        {/* Center column — flex column with overflow hidden */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+          overflow: 'hidden',
+        }}>
+          {/* Avatar area — takes available space above chat */}
+          <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+            <MainArea />
+          </div>
 
-          {/* Zone 3: Command interface */}
-          <div style={{ height: 300, flexShrink: 0 }}>
+          {/* Chat — fixed height, never grows */}
+          <div style={{ height: 280, flexShrink: 0, overflow: 'hidden' }}>
             <BottomChat />
           </div>
         </div>
 
-        {/* Zone 5: Right Telemetry Panel */}
+        {/* Right sidebar */}
         <RightPanel />
       </div>
     </div>

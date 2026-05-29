@@ -1,96 +1,106 @@
 @import "tailwindcss";
 
 /* ============================================
-   HERMES CYBERNETIC THEME — v2.0
-   Based on UI/UX Specification Document
+   HERMES CYBERNETIC THEME — v3.0 Refined
+   Deep blacks · Neon cyan · Tactical grid
    ============================================ */
 
 :root {
-  /* Base */
-  --bg-void: #040810;
-  --bg-panel: #070d18;
-  --bg-surface: #0a1220;
-  --border-panel: #0d2035;
+  /* ── Base Layers ── */
+  --bg-void:       #020508;
+  --bg-panel:      #060b14;
+  --bg-surface:    #091018;
+  --bg-elevated:   #0c1520;
+  --bg-input:      #080e16;
 
-  /* Cyan Neon */
-  --cyan-primary: #00e8ff;
-  --cyan-glow: rgba(0, 232, 255, 0.18);
-  --cyan-dim: #006f88;
-  --cyan-mid: #009ab5;
-  --cyan-tint: #00c8e8;
+  /* ── Borders ── */
+  --border-panel:  #0e1e30;
+  --border-glow:   rgba(0, 220, 255, 0.18);
+  --border-active: rgba(0, 220, 255, 0.35);
 
-  /* Status */
-  --green-online: #00ff55;
-  --amber-sys: #e8a020;
-  --red-bar: #ff2244;
+  /* ── Cyan Palette ── */
+  --cyan:          #00dcff;
+  --cyan-bright:   #00eeff;
+  --cyan-dim:      #007a94;
+  --cyan-mid:      #009dbb;
+  --cyan-glow:     rgba(0, 220, 255, 0.16);
+  --cyan-glow-strong: rgba(0, 220, 255, 0.28);
+  --cyan-text:     #7ee8fa;
 
-  /* Text */
-  --text-primary: #d8eeff;
-  --text-secondary: #4a7a90;
+  /* ── Status ── */
+  --green:         #00e876;
+  --green-glow:    rgba(0, 232, 118, 0.35);
+  --amber:         #f0a020;
+  --amber-glow:    rgba(240, 160, 32, 0.3);
+  --red:           #ff2d55;
+  --red-glow:      rgba(255, 45, 85, 0.3);
+  --violet:        #8b5cf6;
+  --violet-glow:   rgba(139, 92, 246, 0.25);
 
-  /* Fonts */
-  --font-display: 'Orbitron', sans-serif;
-  --font-mono: 'Share Tech Mono', monospace;
+  /* ── Text ── */
+  --text-0:        #e4f0ff;
+  --text-1:        #8aaccc;
+  --text-2:        #3d6080;
+  --text-3:        #1e3a52;
+
+  /* ── Fonts ── */
+  --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+  --font-mono:    'Share Tech Mono', 'Cascadia Code', 'Consolas', monospace;
+
+  /* ── Spacing ── */
+  --radius-sm:     3px;
+  --radius-md:     6px;
+  --radius-lg:     8px;
 }
 
 /* ============================================
-   BASE RESET
+   RESET
    ============================================ */
 *, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  margin: 0; padding: 0; box-sizing: border-box;
 }
-
 html, body, #root {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
+  height: 100%; width: 100%; overflow: hidden;
 }
-
 body {
   font-family: var(--font-mono);
   background: var(--bg-void);
-  color: var(--text-primary);
+  color: var(--text-0);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============================================
-   SCROLLBAR
+   SCROLLBAR — Custom Cyberpunk
    ============================================ */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 232, 255, 0.12);
-  border-radius: 4px;
+::-webkit-scrollbar        { width: 5px; }
+::-webkit-scrollbar-track  { background: var(--bg-void); }
+::-webkit-scrollbar-thumb  {
+  background: var(--cyan-dim);
+  border-radius: 10px;
+  border: 1px solid var(--bg-panel);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 232, 255, 0.25);
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan-glow);
 }
 
+/* Firefox */
+* { scrollbar-width: thin; scrollbar-color: var(--cyan-dim) var(--bg-void); }
+
 /* ============================================
-   SELECTION
+   SELECTION & FOCUS
    ============================================ */
 ::selection {
-  background: rgba(0, 232, 255, 0.25);
-  color: var(--text-primary);
+  background: rgba(0, 220, 255, 0.2);
+  color: var(--text-0);
 }
-
-/* ============================================
-   FOCUS RING (Accessibility)
-   ============================================ */
 :focus-visible {
-  outline: 2px solid var(--cyan-primary) !important;
-  outline-offset: 2px !important;
+  outline: 2px solid var(--cyan);
+  outline-offset: 1px;
 }
 
 /* ============================================
-   PANEL BASE
+   PANELS
    ============================================ */
 .panel {
   background: var(--bg-panel);
@@ -98,280 +108,73 @@ body {
 }
 
 /* ============================================
-   AVATAR
-   ============================================ */
-.avatar-core {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.avatar-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.avatar-image-container {
-  position: relative;
-  z-index: 2;
-}
-
-.avatar-glow-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 270px;
-  height: 270px;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.avatar-image {
-  position: relative;
-  z-index: 2;
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-}
-
-.avatar-scanline {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.avatar-state-label {
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.2em;
-  white-space: nowrap;
-}
-
-/* ============================================
-   CHAT
-   ============================================ */
-.bottom-chat {
-  background: var(--bg-panel);
-  border-top: 2px solid var(--border-panel);
-}
-
-.mode-tab {
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  transition: all 0.15s;
-  background: transparent;
-  text-transform: uppercase;
-}
-
-.mode-tab:hover {
-  color: var(--text-primary) !important;
-}
-
-.chat-message {
-  max-width: 85%;
-}
-
-.chat-message.ml-auto .chat-bubble {
-  margin-left: auto;
-}
-
-.chat-bubble {
-  padding: 8px 14px;
-  border-radius: 4px;
-  border: 1px solid;
-  backdrop-filter: blur(4px);
-}
-
-.chat-role {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  display: block;
-  margin-bottom: 3px;
-  opacity: 0.9;
-}
-
-.chat-content {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.6;
-  color: rgba(216, 238, 255, 0.88);
-  word-break: break-word;
-}
-
-.cursor-blink {
-  display: inline-block;
-  animation: blink 0.8s step-end infinite;
-  color: var(--cyan-primary);
-  font-weight: bold;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-/* ============================================
    ANIMATIONS
    ============================================ */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.03); opacity: 1; }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 10px rgba(0, 232, 255, 0.15); }
-  50% { box-shadow: 0 0 25px rgba(0, 232, 255, 0.3); }
-}
-
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
 }
-
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--cyan-glow); }
+  50% { box-shadow: 0 0 18px var(--cyan-glow-strong); }
+}
 @keyframes scanline {
-  0% { transform: translateY(-100%); }
+  0%   { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
-.animate-breathe {
-  animation: breathe 4s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.animate-pulse-dot {
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin-slow 3s linear infinite;
-}
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+.animate-breathe  { animation: breathe 4s ease-in-out infinite; }
+.animate-glow     { animation: glow-pulse 2s ease-in-out infinite; }
+.animate-fade-up  { animation: fade-up 0.2s ease-out; }
+.cursor-blink     { animation: blink 0.8s step-end infinite; color: var(--cyan); }
 
 /* ============================================
-   ORBITAL BUBBLE MAP
-   ============================================ */
-.orbit-ring {
-  border: 1px dashed var(--cyan-dim);
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.orbit-node {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--cyan-primary);
-  box-shadow: 0 0 12px var(--cyan-glow);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.orbit-node:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 20px var(--cyan-glow);
-}
-
-.orbit-connector {
-  stroke: var(--cyan-dim);
-  stroke-width: 1;
-  stroke-dasharray: 6 4;
-  fill: none;
-}
-
-/* ============================================
-   TELEMETRY BAR
-   ============================================ */
-.telemetry-bar-track {
-  height: 3px;
-  background: rgba(0, 232, 255, 0.08);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.telemetry-bar-fill {
-  height: 100%;
-  background: var(--cyan-primary);
-  border-radius: 2px;
-  transition: width 0.6s ease-in-out;
-}
-
-.telemetry-bar-fill.red {
-  background: var(--red-bar);
-}
-
-/* ============================================
-   HOLOGRAM EFFECTS
-   ============================================ */
-.holo-effects {
-  pointer-events: none;
-}
-
-/* ============================================
-   INPUT FIELD
+   INPUT
    ============================================ */
 .cmd-input {
-  background: var(--bg-surface);
+  background: var(--bg-input);
   border: 1px solid var(--border-panel);
-  border-radius: 4px;
-  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  color: var(--text-0);
   font-family: var(--font-mono);
   font-size: 13px;
   padding: 10px 14px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
-.cmd-input::placeholder {
-  color: var(--text-secondary);
-}
-
+.cmd-input::placeholder { color: var(--text-2); }
 .cmd-input:focus {
   outline: none;
-  border-color: var(--cyan-primary);
-  box-shadow: 0 0 12px rgba(0, 232, 255, 0.12);
+  border-color: var(--cyan-dim);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+
+/* ============================================
+   TELEMETRY BAR
+   ============================================ */
+.bar-track {
+  height: 3px;
+  background: rgba(0, 220, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease-in-out;
+  background: linear-gradient(90deg, var(--cyan-dim), var(--cyan));
+}
+.bar-fill.red {
+  background: linear-gradient(90deg, #8b1a2e, var(--red));
 }
