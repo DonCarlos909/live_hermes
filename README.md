@@ -4,7 +4,7 @@
 
 A cyberpunk tactical AI command interface desktop app with holographic avatar, orbital agent network, and real-time telemetry — built with Tauri 2, React 18, and TypeScript.
 
-![HERMES](https://img.shields.io/badge/HERMES-v2.0-00dcff?style=flat-square)
+![HERMES](https://img.shields.io/badge/HERMES-v2.0-ffaa00?style=flat-square)
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-00bbdd?style=flat-square)
 ![React](https://img.shields.io/badge/React-18-00dcff?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-00bbdd?style=flat-square)
@@ -116,12 +116,12 @@ By default, the app runs in demo mode with simulated responses. To connect to th
 
 | Mode | Color | Purpose |
 |------|-------|---------|
-| CHAT | Cyan `#00dcff` | General conversation |
+| CHAT | Amber `#ffaa00` | General conversation |
 | TACTICAL | Violet `#8b5cf6` | Mission planning |
-| CODING | Teal `#00bbdd` | Code generation & review |
-| CTF | Red `#ff2d55` | Security challenges |
+| CODING | Cyan `#00e5ff` | Code generation & review |
+| CTF | Red `#ff3b5c` | Security challenges |
 | RESEARCH | White `#c8d8e8` | Deep research & sources |
-| AUTO | Amber `#f0a020` | Autonomous multi-agent |
+| AUTO | Green `#39ff6a` | Autonomous multi-agent |
 
 ---
 
@@ -143,18 +143,32 @@ By default, the app runs in demo mode with simulated responses. To connect to th
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| `--bg-void` | `#020508` | Window background |
-| `--bg-panel` | `#060b14` | Panel surfaces |
-| `--bg-surface` | `#091018` | Chat/input backgrounds |
-| `--border-panel` | `#0e1e30` | Panel borders |
-| `--cyan` | `#00dcff` | Primary accent |
-| `--cyan-dim` | `#007a94` | Inactive/dashed elements |
-| `--green` | `#00e876` | Online status |
-| `--amber` | `#f0a020` | System alerts |
-| `--red` | `#ff2d55` | Critical/error |
-| `--text-0` | `#e4f0ff` | Primary text |
-| `--text-1` | `#8aaccc` | Secondary text |
-| `--text-2` | `#3d6080` | Muted labels |
+| `--bg-void` | `#050810` | Window background |
+| `--bg-panel` | `#080e1a` | Panel surfaces |
+| `--bg-surface` | `#0c1526` | Chat/input surfaces |
+| `--bg-elevated` | `#0e1a2e` | Elevated surfaces |
+| `--bg-input` | `#0a1220` | Input backgrounds |
+| `--border-panel` | `#101e32` | Panel borders |
+| `--amber-primary` | `#ffaa00` | Core accent (analysis mode) |
+| `--amber-glow` | `rgba(255,170,0,0.25)` | Halo/ring glow |
+| `--amber-dim` | `#cc8800` | Inactive amber elements |
+| `--amber-text` | `#ffcc66` | Amber text highlights |
+| `--cyan-secondary` | `#00e5ff` | Secondary accent |
+| `--cyan-dim` | `#0099aa` | Borders/inactive elements |
+| `--cyan-mid` | `#00bbcc` | Mid-tone cyan |
+| `--cyan-glow` | `rgba(0,229,255,0.15)` | Subtle cyan glow |
+| `--cyan-glow-strong` | `rgba(0,229,255,0.28)` | Strong cyan pulse |
+| `--cyan-text` | `#66e8ff` | Cyan text highlights |
+| `--green-online` | `#39ff6a` | Online/system status |
+| `--green-glow` | `rgba(57,255,106,0.3)` | Online glow |
+| `--red-alert` | `#ff3b5c` | Critical warnings |
+| `--red-glow` | `rgba(255,59,92,0.25)` | Alert pulse |
+| `--violet` | `#8b5cf6` | Voice mode |
+| `--violet-glow` | `rgba(139,92,246,0.2)` | Voice glow |
+| `--text-primary` | `#e0f4ff` | Main text |
+| `--text-secondary` | `#5a8fa8` | Labels/metadata |
+| `--text-amber` | `#ffcc66` | Analytical highlights |
+| `--text-dim` | `#2d4a5e` | Dimmed text |
 
 ---
 
