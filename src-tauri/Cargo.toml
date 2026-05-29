@@ -1,6 +1,6 @@
 [package]
 name = "hermes"
-version = "1.0.0"
+version = "2.0.0"
 description = "HERMES — Live Cybernetic Intelligence"
 edition = "2021"
 

@@ -1,5 +1,5 @@
 // Right-side telemetry panel with system metrics
-import React from 'react'
+
 
 interface TelemetryItem {
   label: string

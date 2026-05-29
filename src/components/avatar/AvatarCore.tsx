@@ -7,14 +7,6 @@ import './avatar.css'
 
 const STATE_LABELS: Record<AvatarState, string> = {
   idle: 'IDLE',
-  speakING: 'TRANSMITTING',
-  thinking: 'PROCESSING',
-  listening: 'RECEIVING',
-}
-
-// Fix typo in keys above
-const AVATAR_LABELS: Record<string, string> = {
-  idle: 'IDLE',
   speaking: 'TRANSMITTING',
   thinking: 'PROCESSING',
   listening: 'RECEIVING',
@@ -254,7 +246,7 @@ export default function AvatarCore() {
             boxShadow: `0 0 8px ${currentColor}`,
           }}
         />
-        {AVATAR_LABELS[avatarState] ?? 'IDLE'}
+        {STATE_LABELS[avatarState] ?? 'IDLE'}
       </motion.div>
     </div>
   )

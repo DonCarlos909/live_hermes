@@ -1,4 +1,3 @@
-import React from 'react'
 import AvatarCore from '../avatar/AvatarCore'
 
 export default function MainArea() {

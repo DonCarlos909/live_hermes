@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Shield, Wifi, WifiOff, Clock, ChevronDown } from 'lucide-react'
+import { Shield, Clock, ChevronDown } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
-import hermesIcon from '../../assets/avatar/hermes-face.jpg'
 
 export default function TopBar() {
   const isConnected = useHermesStore((s) => s.isConnected)

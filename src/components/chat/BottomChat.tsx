@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Trash2, Settings, ArrowRightLeft } from 'lucide-react'
+import { Trash2, Settings, ArrowRightLeft } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
 import type { ChatMode } from '../../store/types'
 
