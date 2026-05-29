@@ -2,19 +2,21 @@
 
 > *"I'm not a chatbot. I'm your onboard AI."*
 
-A cyberpunk tactical AI command interface desktop app with holographic avatar, orbital agent network, 3D particle background, and real-time telemetry — built with Tauri 2, React 18, and Three.js.
+A cyberpunk tactical AI command interface desktop app with holographic avatar, orbital agent network, and real-time telemetry — built with Tauri 2, React 18, and TypeScript.
 
-![HERMES](https://img.shields.io/badge/HERMES-v2.0-00e8ff?style=flat-square)
-![Tauri](https://img.shields.io/badge/Tauri-2.0-22d3ee?style=flat-square)
-![React](https://img.shields.io/badge/React-18-00e8ff?style=flat-square)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6-22d3ee?style=flat-square)
-![Platform](https://img.shields.io/badge/Platform-Windows-00e8ff?style=flat-square)
+![HERMES](https://img.shields.io/badge/HERMES-v2.0-00dcff?style=flat-square)
+![Tauri](https://img.shields.io/badge/Tauri-2.0-00bbdd?style=flat-square)
+![React](https://img.shields.io/badge/React-18-00dcff?style=flat-square)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6-00bbdd?style=flat-square)
+![Platform](https://img.shields.io/badge/Platform-Windows-00dcff?style=flat-square)
+
+---
 
 ## Download & Install
 
 ### Windows (One-Click)
 
-1. **Download** → [Hermes_2.0.0_x64-setup.exe](https://github.com/DonCarlos909/live_hermes/releases/download/v2.0.0/Hermes_2.0.0_x64-setup.exe) (5.2 MB)
+1. **Download** → [Hermes_2.0.0_x64-setup.exe](https://github.com/DonCarlos909/live_hermes/releases/download/v2.0.0/Hermes_2.0.0_x64-setup.exe) (5.7 MB)
 2. **Run** the installer
 3. **Open** Hermes from Start menu
 
@@ -37,128 +39,204 @@ npm run tauri dev
 
 # Build Windows installer (.exe)
 npm run tauri build
+
+# Cross-compile for Windows from Linux
+npm run tauri build -- --target x86_64-pc-windows-gnu
 ```
 
----\n
+---
+
+## Connect to Hermes Agent (Real AI)
+
+By default, the app runs in demo mode with simulated responses. To connect to the real Hermes Agent:
+
+1. Open **Settings** (sidebar) → **Hermes** tab
+2. Click **GENERATE** to create an API key
+3. Give this key to Hermes Agent (via Discord `@Atlas` or setup)
+4. Hermes Agent registers your app as authorized
+5. Click **TEST CONNECTION** to verify
+6. Once connected (**LIVE**), all chat responses come from real Hermes AI
+
+### How It Works
+
+```
+┌──────────────────────────┐     API Key + HTTPS     ┌──────────────────────┐
+│  HERMES Desktop App       │ ◄──────────────────────► │  Hermes Agent        │
+│  (Windows / Tauri)        │   Authorization:        │  (Discord / Cloud)   │
+│                           │   Bearer hmk_xxxx       │                      │
+│  ┌─────────────────────┐  │                         │  ┌────────────────┐  │
+│  │ Chat → POST /api/chat│─┘                         │  │ AI Response    │  │
+│  └─────────────────────┘                            │  └────────────────┘  │
+└──────────────────────────┘                          └──────────────────────┘
+```
+
+---
 
 ## Interface Layout
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  ≡ HERMES v2.0    ● ONLINE    IDLE MODE    AGENTS: RECON | CODE | CTF | HERMES │
+┌──────────────────────────────────────────────────────────────────────────┐
+│  ≡ HERMES v2.0    ● ONLINE    IDLE MODE    AGENTS: RECON | CODE | CTF  │
 ├────────────┬────────────────────────────────────────────┬────────────────┤
 │            │                                            │                │
-│  AGENTS    │             ● HERMES (Avatar Core)         │  TELEMETRY     │
-│  MEMORY    │          (orbital ring w/ arms)            │  ────────────  │
-│  TOOLS     │        ←◄---- Horizontal arm ----►→        │  ═══════════   │
-│  TASKS     │                                            │  ────────────  │
-│  FILES     │                                            │  ══   ██   ══  │
+│  AGENTS    │           ◉ HERMES AVATAR CORE            │  TELEMETRY     │
+│  MEMORY    │        (orbital ring with arms)           │  CPU    23%    │
+│  TOOLS     │     ←◄──── horizontal arm ────►→         │  MEM    67%    │
+│  TASKS     │                                            │  NET    45%    │
+│  SETTINGS  │           ● IDLE (pulse)                   │  DISK   12%    │
 ├────────────┴────────────────────────────────────────────┴────────────────┤
-│  ▷ CHAT  │  TACTICAL  │  CODING  │  CTF  │  RESEARCH  │  AUTO  │ [SETTINGS] │
-│  ┌────────────────────────────────────────────────────────────────┐      │
-│  │ [SYS]   SYSTEM DIAGNOSTICS COMPLETE.                           │      │
-│  │ HERMES ▶ All systems nominal. Awaiting your command.           │      │
-│  │ USER   ▶ Initiate reconnaissance scan.                         │      │
-│  └────────────────────────────────────────────────────────────────┘      │
-│  ▶  Enter command...                                       [≡] [◄►]    │
-└─────────────────────────────────────────────────────────────────────────┘
+│  ▷ CHAT  │ TACTICAL │ CODING │ CTF │ RESEARCH │ AUTO │                  │
+│  ┌──────────────────────────────────────────────────────────────────┐   │
+│  │ [SYS]   HERMES v2.0 initialized. All systems nominal.            │   │
+│  │ HERMES ▶ Welcome, Operator. All subsystems online.               │   │
+│  │ USER   ▶ Initiate reconnaissance scan.                           │   │
+│  │ HERMES ▶ Acknowledged. Processing request...                     │   │
+│  └──────────────────────────────────────────────────────────────────┘   │
+│  ▶  Enter command...                                          [≡] [◄►] │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
----\n
+---
 
 ## Features
 
-|| Feature | Description |
-||---------|-------------|
-|| 👁️ **Holographic Avatar** | AI face with idle/speaking/thinking/listening states, double orbital ring with horizontal arms, floating particle field |
-|| 🌌 **Starfield Background** | Deep space gradient with animated scanlines and subtle vignette |
-|| 💫 **Orbital Agent Network** | Circular bubble map with HERMES at center, satellite agents on elliptical orbit, connector lines |
-|| 💬 **Streaming Command Interface** | Typewriter text effect, mode-based responses, cursor blink, chat history |
-|| 🖥️ **Telemetry Panel** | System metrics with horizontal progress bars, status lines, connection indicators |
-|| 🎨 **Mode System** | Chat, Tactical, Coding, CTF, Research, Autonomous — each with unique color accent |
-|| ✨ **Hologram FX** | Scanlines, vignette, chromatic aberration simulation, ambient glow |
-|| 🧠 **Memory & Tools Panels** | Neural network visualization, holographic tool activation grid |
-|| 📋 **Task Panel** | Agent-specific task tracking with progress indicators |
-|| ⚙️ **Settings Panel** | LLM config, Ollama manager, Hermes Docker bridge, user guide |
+- **Holographic Avatar** — AI face with idle/speaking/thinking/listening states, orbital ring with horizontal arms, floating particles
+- **Orbital Agent Network** — Circular bubble map: HERMES at center, satellite agents on elliptical orbit with connector lines
+- **Streaming Chat** — Typewriter effect, mode-based responses, 6 chat themes, custom scrollbars
+- **Telemetry Panel** — Real-time system metrics with horizontal progress bars
+- **Mode System** — CHAT / TACTICAL / CODING / CTF / RESEARCH / AUTO — each with unique color
+- **Agent Connection** — Generate API key → authorize with Hermes Agent → real AI responses
+- **Hologram FX** — Scanlines, vignette, glow effects
+- **Memory & Tools Panels** — Neural network visualization, tool activation grid
+- **Task Tracking** — Agent-specific tasks with progress indicators
 
----\n
+---
+
+## Chat Modes
+
+| Mode | Color | Purpose |
+|------|-------|---------|
+| CHAT | Cyan `#00dcff` | General conversation |
+| TACTICAL | Violet `#8b5cf6` | Mission planning |
+| CODING | Teal `#00bbdd` | Code generation & review |
+| CTF | Red `#ff2d55` | Security challenges |
+| RESEARCH | White `#c8d8e8` | Deep research & sources |
+| AUTO | Amber `#f0a020` | Autonomous multi-agent |
+
+---
 
 ## Tech Stack
 
-|| Layer | Technology |
-||-------|-----------|
-|| Shell | Tauri 2 (Rust) |
-|| Frontend | React 18 + Vite 6 + TypeScript 5.6 |
-|| Styling | Tailwind CSS 4 + custom CSS variables |
-|| 3D | Three.js (starfield background placeholder) |
-|| State | Zustand 5 |
-|| Animations | Framer Motion 11 |
-|| Icons | Lucide React |
-|| Fonts | Orbitron + Share Tech Mono |
+| Layer | Technology |
+|-------|-----------|
+| Shell | Tauri 2 (Rust) |
+| Frontend | React 18 + Vite 6 + TypeScript 5.6 |
+| Styling | Tailwind CSS 4 + custom CSS variables |
+| State | Zustand 5 |
+| Animations | Framer Motion 11 |
+| Icons | Lucide React |
+| Fonts | Orbitron + Share Tech Mono |
 
----\n
+---
 
 ## Color Palette
 
-|| Role | Name | Hex |
-||------|------|-----|
-|| Background Void | --bg-void | `#040810` |
-|| Background Panel | --bg-panel | `#070d18` |
-|| Border Panel | --border-panel | `#0d2035` |
-|| Surface | --bg-surface | `#0a1220` |
-|| Primary Cyan | --cyan-primary | `#00e8ff` |
-|| Cyan Glow | --cyan-glow | `rgba(0,232,255,0.18)` |
-|| Cyan Dim | --cyan-dim | `#006f88` |
-|| Cyan Mid | --cyan-mid | `#009ab5` |
-|| Online Status | --green-online | `#00ff55` |
-|| System Alert | --amber-sys | `#e8a020` |
-|| Critical Metric | --red-bar | `#ff2244` |
-|| Primary Text | --text-primary | `#d8eeff` |
-|| Secondary Text | --text-secondary | `#4a7a90` |
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `--bg-void` | `#020508` | Window background |
+| `--bg-panel` | `#060b14` | Panel surfaces |
+| `--bg-surface` | `#091018` | Chat/input backgrounds |
+| `--border-panel` | `#0e1e30` | Panel borders |
+| `--cyan` | `#00dcff` | Primary accent |
+| `--cyan-dim` | `#007a94` | Inactive/dashed elements |
+| `--green` | `#00e876` | Online status |
+| `--amber` | `#f0a020` | System alerts |
+| `--red` | `#ff2d55` | Critical/error |
+| `--text-0` | `#e4f0ff` | Primary text |
+| `--text-1` | `#8aaccc` | Secondary text |
+| `--text-2` | `#3d6080` | Muted labels |
 
----\n
+---
+
+## Project Structure
+
+```
+live_hermes/
+├── src-tauri/                   # Tauri Rust backend
+│   ├── src/lib.rs               # Commands: test_connection, check_ollama, etc.
+│   ├── tauri.conf.json          # Window config, bundle settings
+│   └── Cargo.toml
+├── src/
+│   ├── main.tsx                 # Entry point
+│   ├── App.tsx                  # Root layout (4-zone grid)
+│   ├── index.css                # Theme, scrollbars, animations
+│   ├── store/
+│   │   ├── hermes.ts            # Zustand store (state + demo data)
+│   │   └── types.ts             # TypeScript interfaces
+│   └── components/
+│       ├── layout/
+│       │   ├── TopBar.tsx       # Status bar with logo, mode, agents
+│       │   ├── LeftPanel.tsx    # Sidebar tabs
+│       │   ├── MainArea.tsx     # Avatar + starfield
+│       │   └── RightPanel.tsx   # Telemetry readouts
+│       ├── chat/
+│       │   └── BottomChat.tsx   # Streaming chat + input
+│       ├── avatar/
+│       │   ├── AvatarCore.tsx   # Face + orbital ring + particles
+│       │   └── avatar.css
+│       ├── bubble/
+│       │   └── OrbitalBubbleMap.tsx  # Agent network diagram
+│       ├── sidebar/
+│       │   ├── SettingsPanel.tsx    # LLM, Ollama, Hermes, Guide
+│       │   ├── MemoryPanel.tsx      # Neural memory map
+│       │   ├── ToolsPanel.tsx       # Tool activation grid
+│       │   └── TasksPanel.tsx       # Task list
+│       ├── effects/
+│       │   └── HologramEffects.tsx  # Scanlines, vignette
+│       └── mode/
+│           └── ModeSystem.tsx       # Mode overlays
+```
+
+---
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                       Frontend                              │
+│  Frontend — React + Vite + Tailwind v4                     │
 │  ┌──────────┬──────────────┬──────────────┬──────────────┐  │
 │  │  TopBar  │  LeftPanel   │  MainArea    │  RightPanel  │  │
-│  │          │  (agents)    │  (avatar)    │  (telemetry) │  │
-│  │          │              │              │              │  │
-│  │          │              │              │              │  │
-│  │          │              │              │              │  │
+│  │          │  (sidebar)   │  (avatar)    │  (telemetry) │  │
+│  │          │              ├──────────────┤              │  │
+│  │          │              │  BottomChat  │              │  │
 │  └──────────┴──────────────┴──────────────┴──────────────┘  │
-│           ┌─────────────────────────────────────────┐       │
-│           │    BottomChat (command interface)       │       │
-│           │    (tabs + message log + input)         │       │
-│           └─────────────────────────────────────────┘       │
 ├─────────────────────────────────────────────────────────────┤
-│                        Tauri 2 Backend                      │
+│  Tauri 2 Backend — Rust                                     │
+│  Commands: test_connection, check_ollama, pull_model,       │
+│            check_docker, start_hermes_container             │
 ├─────────────────────────────────────────────────────────────┤
-│  State: Zustand     3D: Three.js     Animations: Framer    │
-│  Graph: Custom SVG  Effects: Canvas  UI: React + Tailwind  │
+│  State: Zustand │ Animations: Framer Motion                │
+│  Effects: Canvas │ Graph: Custom SVG                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
----\n
+---
 
 ## Roadmap
 
-|| Phase | Status | Description |
-||-------|--------|-------------|
-|| **Phase 1** | ✅ Complete | Cyberpunk UI/UX overhaul, orbital agent network, holographic avatar, telemetry panel |
-|| **Phase 2** | 🔄 In Progress | Real Hermes AI integration via Docker bridge, Ollama local model support |
-|| **Phase 3** | ⏳ Planned | Avatar expression sync with voice, advanced particle systems, memory visualization |
-|| **Phase 4** | ⏳ Planned | Live2D avatar, multi-agent orchestration, autonomous task execution chains |
+| Phase | Status | Description |
+|-------|--------|-------------|
+| **Phase 1** | ✅ Complete | UI/UX overhaul, orbital agents, holographic avatar, telemetry |
+| **Phase 2** | ✅ Complete | API key auth, Hermes Agent connection, scroll/color fixes |
+| **Phase 3** | 🔄 In Progress | Real-time AI streaming, Ollama local models |
+| **Phase 4** | ⏳ Planned | Live2D avatar, multi-agent orchestration |
 
----\n
+---
 
 ## License
 
 MIT — see [LICENSE](LICENSE) for details.
 
----\n
+---
 
 *Last updated: May 29, 2026*
