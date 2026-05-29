@@ -14,7 +14,7 @@ export interface Agent {
   status: AgentStatus
   tasksActive: number
   tasksCompleted: number
-  connections: string[]  // IDs of connected agents
+  connections: string[]
 }
 
 export interface ChatMessage {
@@ -39,10 +39,6 @@ export interface AppTask {
   status: 'pending' | 'in_progress' | 'completed' | 'failed'
   progress: number
 }
-
-// ============================================
-// LLM / Settings Types
-// ============================================
 
 export type LLMProvider = 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'openrouter' | 'custom'
 
@@ -76,12 +72,10 @@ export interface HermesConnectionConfig {
 }
 
 export interface UserSettings {
-  // LLM
   active_provider: LLMProvider
   models: LLMModel[]
   ollama_modules: OllamaModule[]
   hermes_docker: HermesConnectionConfig
-  // UI
   audio_enabled: boolean
   animations_enabled: boolean
   theme: 'cyber' | 'dark' | 'matrix'

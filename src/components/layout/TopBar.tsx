@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Shield, Wifi, WifiOff, Clock, Activity, Settings } from 'lucide-react'
+import { Shield, Wifi, WifiOff, Clock, ChevronDown } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
 import hermesIcon from '../../assets/avatar/hermes-face.jpg'
 
@@ -8,7 +7,6 @@ export default function TopBar() {
   const isConnected = useHermesStore((s) => s.isConnected)
   const agents = useHermesStore((s) => s.agents)
   const mode = useHermesStore((s) => s.mode)
-  const setActiveTab = useHermesStore((s) => s.setActiveSidebarTab)
   const [time, setTime] = useState(new Date())
 
   useEffect(() => {
@@ -16,94 +14,165 @@ export default function TopBar() {
     return () => clearInterval(interval)
   }, [])
 
-  const activeAgents = agents.filter((a) => a.status === 'active' || a.status === 'working').length
-  const totalTasks = agents.reduce((sum, a) => sum + a.tasksActive, 0)
+  const activeAgents = agents.filter((a) => a.status === 'active' || a.status === 'working')
 
   const modeColors: Record<string, string> = {
-    idle: '#00d4ff',
-    analysis: '#00d4ff',
-    ctf: '#ff2d55',
-    coding: '#22d3ee',
+    idle: '#00e8ff',
+    analysis: '#00e8ff',
+    ctf: '#ff2244',
+    coding: '#00c8e8',
     voice: '#8b5cf6',
   }
 
+  const modeColor = modeColors[mode] ?? '#00e8ff'
+
   return (
-    <motion.header
-      className="top-bar flex items-center justify-between h-12 px-4 bg-black/50 backdrop-blur-md border-b border-white/5 shrink-0 z-30"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <header
+      style={{
+        height: 48,
+        background: 'var(--bg-panel)',
+        borderBottom: '2px solid var(--border-panel)',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 20px',
+        gap: 16,
+        fontFamily: 'var(--font-mono)',
+        flexShrink: 0,
+        zIndex: 30,
+      }}
     >
-      {/* Left: Logo + Status */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <img
-            src={hermesIcon}
-            alt="Hermes"
-            className="w-7 h-7 rounded-full object-cover border border-[#00d4ff33]"
-            style={{ boxShadow: '0 0 8px rgba(0,212,255,0.3)' }}
+      {/* Left: Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{ color: 'var(--cyan-primary)', fontSize: 18, fontWeight: 700, fontFamily: 'var(--font-display)' }}>
+          &#8801;
+        </span>
+        <span
+          style={{
+            color: 'var(--cyan-primary)',
+            fontSize: 22,
+            fontWeight: 900,
+            fontFamily: 'var(--font-display)',
+            textShadow: '0 0 16px #00e8ff',
+            letterSpacing: '0.12em',
+          }}
+        >
+          HERMES
+        </span>
+        <span style={{ color: 'var(--text-secondary)', fontSize: 12, fontFamily: 'var(--font-mono)' }}>
+          v2.0
+        </span>
+      </div>
+
+      {/* Spacer */}
+      <div style={{ flex: 1 }} />
+
+      {/* Center: Status + Mode */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        {/* Online dot */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: isConnected ? 'var(--green-online)' : 'var(--red-bar)',
+              boxShadow: isConnected ? '0 0 8px rgba(0,255,85,0.5)' : '0 0 8px rgba(255,34,68,0.5)',
+              animation: 'pulse-dot 2s ease-in-out infinite',
+            }}
           />
-          <span className="font-['Orbitron'] text-sm font-bold tracking-wider text-[#f0f0ff]">
-            HERMES
-          </span>
-          <span className="text-[9px] font-mono text-white/20">v1.0</span>
-        </div>
-
-        <div className="h-4 w-px bg-white/10" />
-
-        <div className="flex items-center gap-1.5">
-          {isConnected ? (
-            <Wifi size={12} className="text-[#22d3ee]" />
-          ) : (
-            <WifiOff size={12} className="text-[#ff2d55]" />
-          )}
-          <span className={`text-[9px] font-mono ${isConnected ? 'text-[#22d3ee]' : 'text-[#ff2d55]'}`}>
+          <span
+            style={{
+              fontSize: 12,
+              fontFamily: 'var(--font-display)',
+              color: isConnected ? 'var(--green-online)' : 'var(--red-bar)',
+              fontWeight: 700,
+            }}
+          >
             {isConnected ? 'ONLINE' : 'OFFLINE'}
           </span>
         </div>
-      </div>
 
-      {/* Center: Mode indicator + Agent/Task stats */}
-      <div className="flex items-center gap-3">
+        {/* Mode badge */}
         <div
-          className="flex items-center gap-2 px-3 py-1 rounded-full border"
           style={{
-            borderColor: `${modeColors[mode]}22`,
-            background: `${modeColors[mode]}08`,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '3px 12px',
+            border: '1px solid',
+            borderColor: modeColor + '44',
+            borderRadius: 4,
+            background: modeColor + '0a',
           }}
         >
-          <Shield size={12} style={{ color: modeColors[mode] }} />
-          <span className="text-[9px] font-mono tracking-widest" style={{ color: modeColors[mode] }}>
-            {mode.toUpperCase()} MODE
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <Activity size={12} className="text-[#00d4ff]" />
-          <span className="text-[9px] font-mono text-white/50">
-            {activeAgents} agents · {totalTasks} tasks
+          <Shield size={11} style={{ color: modeColor }} />
+          <span
+            style={{
+              fontSize: 12,
+              fontFamily: 'var(--font-display)',
+              color: 'var(--text-primary)',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+            }}
+          >
+            {mode === 'idle' ? 'IDLE MODE' : mode.toUpperCase() + ' MODE'}
           </span>
         </div>
       </div>
 
-      {/* Right: Time + Settings shortcut */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => setActiveTab('settings')}
-          className="text-white/20 hover:text-[#00d4ff] transition-colors p-1"
-          title="Open Settings"
+      {/* Spacer */}
+      <div style={{ flex: 1 }} />
+
+      {/* Right: Agent pills + Time */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{ fontSize: 12, fontFamily: 'var(--font-display)', color: 'var(--cyan-primary)' }}>
+          AGENTS:
+        </span>
+        {activeAgents.map((agent, i) => (
+          <span key={agent.id} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            {i > 0 && <span style={{ color: 'var(--text-secondary)', fontSize: 10, marginRight: 2 }}>|</span>}
+            <span
+              style={{
+                fontSize: 11,
+                fontFamily: 'var(--font-mono)',
+                color: agent.status === 'working' ? 'var(--cyan-primary)' : 'var(--cyan-mid)',
+                letterSpacing: '0.06em',
+              }}
+            >
+              {agent.name.toUpperCase()}
+            </span>
+          </span>
+        ))}
+        <span
+          style={{
+            fontSize: 11,
+            fontFamily: 'var(--font-mono)',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+          }}
         >
-          <Settings size={14} />
-        </button>
+          + VOICE <ChevronDown size={10} />
+        </span>
 
-        <div className="h-4 w-px bg-white/10" />
+        <div style={{ width: 1, height: 16, background: 'var(--border-panel)', margin: '0 4px' }} />
 
-        <div className="flex items-center gap-1.5">
-          <Clock size={12} className="text-white/30" />
-          <span className="text-[10px] font-mono text-white/50 tabular-nums">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <Clock size={11} style={{ color: 'var(--text-secondary)' }} />
+          <span
+            style={{
+              fontSize: 11,
+              fontFamily: 'var(--font-mono)',
+              color: 'var(--text-secondary)',
+              fontVariantNumeric: 'tabular-nums',
+            }}
+          >
             {time.toLocaleTimeString('en-US', { hour12: false })}
           </span>
         </div>
       </div>
-    </motion.header>
+    </header>
   )
 }

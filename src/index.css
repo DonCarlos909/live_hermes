@@ -1,29 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap');
-
 @import "tailwindcss";
 
 /* ============================================
-   CYBERPUNK THEME — CSS Custom Properties
+   HERMES CYBERNETIC THEME — v2.0
+   Based on UI/UX Specification Document
    ============================================ */
-:root {
-  --neon-blue: #00d4ff;
-  --crimson: #ff2d55;
-  --deep-black: #0a0a0f;
-  --violet: #8b5cf6;
-  --cyan: #22d3ee;
-  --white-highlight: #f0f0ff;
 
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #0f0f1a;
-  --bg-glass: rgba(10, 10, 15, 0.7);
-  --border-subtle: rgba(255, 255, 255, 0.05);
-  --border-glow: rgba(0, 212, 255, 0.2);
+:root {
+  /* Base */
+  --bg-void: #040810;
+  --bg-panel: #070d18;
+  --bg-surface: #0a1220;
+  --border-panel: #0d2035;
+
+  /* Cyan Neon */
+  --cyan-primary: #00e8ff;
+  --cyan-glow: rgba(0, 232, 255, 0.18);
+  --cyan-dim: #006f88;
+  --cyan-mid: #009ab5;
+  --cyan-tint: #00c8e8;
+
+  /* Status */
+  --green-online: #00ff55;
+  --amber-sys: #e8a020;
+  --red-bar: #ff2244;
+
+  /* Text */
+  --text-primary: #d8eeff;
+  --text-secondary: #4a7a90;
+
+  /* Fonts */
+  --font-display: 'Orbitron', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
 }
 
 /* ============================================
-   BASE
+   BASE RESET
    ============================================ */
-* {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -36,69 +49,148 @@ html, body, #root {
 }
 
 body {
-  font-family: 'Share Tech Mono', monospace;
-  background: var(--bg-primary);
-  color: var(--white-highlight);
+  font-family: var(--font-mono);
+  background: var(--bg-void);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
-}
-
-/* ============================================
-   GLASSMORPHISM
-   ============================================ */
-.glass {
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-subtle);
-}
-
-.glass-glow {
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glow);
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.05);
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============================================
    SCROLLBAR
    ============================================ */
-.scrollbar-thin::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 4px;
 }
-.scrollbar-thin::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
 }
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(0, 212, 255, 0.15);
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 232, 255, 0.12);
   border-radius: 4px;
 }
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 212, 255, 0.3);
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 232, 255, 0.25);
 }
 
 /* ============================================
-   CHAT PANEL
+   SELECTION
+   ============================================ */
+::selection {
+  background: rgba(0, 232, 255, 0.25);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   FOCUS RING (Accessibility)
+   ============================================ */
+:focus-visible {
+  outline: 2px solid var(--cyan-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* ============================================
+   PANEL BASE
+   ============================================ */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+}
+
+/* ============================================
+   AVATAR
+   ============================================ */
+.avatar-core {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.avatar-image-container {
+  position: relative;
+  z-index: 2;
+}
+
+.avatar-glow-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 270px;
+  height: 270px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.avatar-image {
+  position: relative;
+  z-index: 2;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.avatar-state-label {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
+
+/* ============================================
+   CHAT
    ============================================ */
 .bottom-chat {
-  background: rgba(5, 5, 10, 0.8);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-panel);
+  border-top: 2px solid var(--border-panel);
 }
 
 .mode-tab {
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 4px;
   border: 1px solid transparent;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.15em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   background: transparent;
+  text-transform: uppercase;
 }
 
 .mode-tab:hover {
-  color: var(--white-highlight) !important;
+  color: var(--text-primary) !important;
 }
 
 .chat-message {
@@ -110,33 +202,34 @@ body {
 }
 
 .chat-bubble {
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 8px 14px;
+  border-radius: 4px;
   border: 1px solid;
   backdrop-filter: blur(4px);
 }
 
 .chat-role {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
   letter-spacing: 0.1em;
   display: block;
-  margin-bottom: 4px;
-  opacity: 0.8;
+  margin-bottom: 3px;
+  opacity: 0.9;
 }
 
 .chat-content {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
-  line-height: 1.5;
-  color: rgba(240, 240, 255, 0.85);
+  line-height: 1.6;
+  color: rgba(216, 238, 255, 0.88);
   word-break: break-word;
 }
 
 .cursor-blink {
   display: inline-block;
   animation: blink 0.8s step-end infinite;
-  color: var(--crimson);
+  color: var(--cyan-primary);
   font-weight: bold;
 }
 
@@ -146,49 +239,26 @@ body {
 }
 
 /* ============================================
-   HOLOGRAM EFFECTS
-   ============================================ */
-.holo-effects {
-  pointer-events: none;
-}
-
-/* ============================================
-   LEFT PANEL
-   ============================================ */
-.left-panel {
-  overflow: hidden;
-}
-
-/* ============================================
-   MAIN AREA
-   ============================================ */
-.main-area {
-  position: relative;
-}
-
-/* ============================================
-   TOP BAR
-   ============================================ */
-.top-bar {
-  font-family: 'Share Tech Mono', monospace;
-}
-
-/* ============================================
    ANIMATIONS
    ============================================ */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-6px); }
 }
 
 @keyframes breathe {
   0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 1; }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
-  50% { box-shadow: 0 0 25px rgba(0, 212, 255, 0.4); }
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 232, 255, 0.15); }
+  50% { box-shadow: 0 0 25px rgba(0, 232, 255, 0.3); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
 @keyframes scanline {
@@ -196,11 +266,9 @@ body {
   100% { transform: translateY(100vh); }
 }
 
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.95; }
-  52% { opacity: 0.7; }
-  54% { opacity: 0.95; }
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .animate-float {
@@ -215,10 +283,95 @@ body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
 /* ============================================
-   SELECTION
+   ORBITAL BUBBLE MAP
    ============================================ */
-::selection {
-  background: rgba(0, 212, 255, 0.3);
-  color: var(--white-highlight);
+.orbit-ring {
+  border: 1px dashed var(--cyan-dim);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orbit-node {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--cyan-primary);
+  box-shadow: 0 0 12px var(--cyan-glow);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.orbit-node:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 20px var(--cyan-glow);
+}
+
+.orbit-connector {
+  stroke: var(--cyan-dim);
+  stroke-width: 1;
+  stroke-dasharray: 6 4;
+  fill: none;
+}
+
+/* ============================================
+   TELEMETRY BAR
+   ============================================ */
+.telemetry-bar-track {
+  height: 3px;
+  background: rgba(0, 232, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.telemetry-bar-fill {
+  height: 100%;
+  background: var(--cyan-primary);
+  border-radius: 2px;
+  transition: width 0.6s ease-in-out;
+}
+
+.telemetry-bar-fill.red {
+  background: var(--red-bar);
+}
+
+/* ============================================
+   HOLOGRAM EFFECTS
+   ============================================ */
+.holo-effects {
+  pointer-events: none;
+}
+
+/* ============================================
+   INPUT FIELD
+   ============================================ */
+.cmd-input {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-panel);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 10px 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cmd-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.cmd-input:focus {
+  outline: none;
+  border-color: var(--cyan-primary);
+  box-shadow: 0 0 12px rgba(0, 232, 255, 0.12);
 }

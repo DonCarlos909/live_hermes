@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useHermesStore } from './store/hermes'
 import TopBar from './components/layout/TopBar'
 import LeftPanel from './components/layout/LeftPanel'
+import RightPanel from './components/layout/RightPanel'
 import MainArea from './components/layout/MainArea'
 import BottomChat from './components/chat/BottomChat'
 import HologramEffects from './components/effects/HologramEffects'
@@ -10,7 +11,7 @@ import ModeSystem from './components/mode/ModeSystem'
 export default function App() {
   const setAvatarState = useHermesStore((s) => s.setAvatarState)
 
-  // Cycle through avatar states for demo purposes
+  // Demo: cycle avatar states
   useEffect(() => {
     const states = ['idle', 'thinking', 'speaking', 'listening'] as const
     let idx = 0
@@ -22,31 +23,45 @@ export default function App() {
   }, [setAvatarState])
 
   return (
-    <div className="hermes-app h-screen w-screen flex flex-col bg-[#0a0a0f] text-[#f0f0ff] overflow-hidden">
-      {/* Holographic effects overlay */}
+    <div
+      style={{
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'var(--bg-void)',
+        color: 'var(--text-primary)',
+        overflow: 'hidden',
+        fontFamily: 'var(--font-mono)',
+      }}
+    >
+      {/* Holographic overlay effects */}
       <HologramEffects />
 
-      {/* Mode system (glows + overlays) */}
+      {/* Mode system overlays */}
       <ModeSystem />
 
-      {/* Top status bar */}
+      {/* Zone 1: Topbar */}
       <TopBar />
 
-      {/* Main content area */}
-      <div className="flex flex-1 min-h-0">
-        {/* Left sidebar */}
+      {/* Zone 2-4: Main content row */}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+        {/* Zone 2: Left Panel */}
         <LeftPanel />
 
-        {/* Center + Bottom */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Avatar + Background */}
+        {/* Zone 3-4: Center column */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+          {/* Zone 4: Avatar core */}
           <MainArea />
 
-          {/* Chat panel */}
-          <div className="h-[320px] shrink-0">
+          {/* Zone 3: Command interface */}
+          <div style={{ height: 300, flexShrink: 0 }}>
             <BottomChat />
           </div>
         </div>
+
+        {/* Zone 5: Right Telemetry Panel */}
+        <RightPanel />
       </div>
     </div>
   )

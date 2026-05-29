@@ -1,34 +1,60 @@
-import { motion } from 'framer-motion'
+import React from 'react'
 import AvatarCore from '../avatar/AvatarCore'
-import CyberBackground from '../background/CyberBackground'
 
 export default function MainArea() {
   return (
-    <motion.main
-      className="main-area relative flex-1 flex items-center justify-center overflow-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
+    <main
+      style={{
+        flex: 1,
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        minWidth: 0,
+      }}
     >
-      {/* Three.js Background */}
-      <CyberBackground />
+      {/* Background gradient */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background:
+            'radial-gradient(ellipse at 50% 40%, #0a1a30 0%, #040810 100%)',
+          zIndex: 0,
+        }}
+      />
 
-      {/* Avatar centered */}
-      <div className="relative z-10 w-full h-full max-w-[500px] max-h-[500px]">
+      {/* Avatar */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          width: '100%',
+          height: '100%',
+          maxWidth: 480,
+          maxHeight: 480,
+        }}
+      >
         <AvatarCore />
       </div>
 
-      {/* Ambient glow behind avatar */}
+      {/* Ambient glow */}
       <div
-        className="absolute z-0 pointer-events-none"
         style={{
-          width: '400px',
-          height: '400px',
+          position: 'absolute',
+          zIndex: 1,
+          width: 350,
+          height: 350,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(0,232,255,0.04) 0%, transparent 70%)',
           filter: 'blur(40px)',
+          pointerEvents: 'none',
         }}
       />
-    </motion.main>
+    </main>
   )
 }

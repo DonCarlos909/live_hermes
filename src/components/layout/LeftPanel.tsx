@@ -1,106 +1,97 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Wrench, ListTodo, FolderOpen, Network, Settings } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
+import OrbitalBubbleMap from '../bubble/OrbitalBubbleMap'
 import MemoryPanel from '../sidebar/MemoryPanel'
 import ToolsPanel from '../sidebar/ToolsPanel'
 import TasksPanel from '../sidebar/TasksPanel'
-import AgentsPanel from '../sidebar/AgentsPanel'
 import SettingsPanel from '../sidebar/SettingsPanel'
 
-const TABS = [
-  { id: 'agents', label: 'Agents', icon: Network },
-  { id: 'memory', label: 'Memory', icon: Brain },
-  { id: 'tools', label: 'Tools', icon: Wrench },
-  { id: 'tasks', label: 'Tasks', icon: ListTodo },
-  { id: 'files', label: 'Files', icon: FolderOpen },
-  { id: 'settings', label: 'Settings', icon: Settings },
-]
-
-function FilesPanel() {
-  return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
-        <h3 className="text-xs font-mono tracking-wider text-[#f0f0ff]">FILES</h3>
-      </div>
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-[10px] font-mono text-white/20">Drop files here</p>
-      </div>
-    </div>
-  )
-}
+type SidebarTab = 'agents' | 'memory' | 'tools' | 'tasks' | 'settings'
 
 export default function LeftPanel() {
-  const activeTab = useHermesStore((s) => s.activeSidebarTab)
+  const activeTab = useHermesStore<SidebarTab>((s) => s.activeSidebarTab as SidebarTab)
   const setActiveTab = useHermesStore((s) => s.setActiveSidebarTab)
-  const leftPanelOpen = useHermesStore((s) => s.leftPanelOpen)
-  const toggleLeftPanel = useHermesStore((s) => s.toggleLeftPanel)
+
+  const tabs: { id: SidebarTab; label: string }[] = [
+    { id: 'agents', label: 'AGENTS' },
+    { id: 'memory', label: 'MEMORY' },
+    { id: 'tools', label: 'TOOLS' },
+    { id: 'tasks', label: 'TASKS' },
+    { id: 'settings', label: 'SETTINGS' },
+  ]
 
   const renderPanel = () => {
     switch (activeTab) {
-      case 'agents': return <AgentsPanel />
+      case 'agents': return <OrbitalBubbleMap />
       case 'memory': return <MemoryPanel />
       case 'tools': return <ToolsPanel />
       case 'tasks': return <TasksPanel />
-      case 'files': return <FilesPanel />
       case 'settings': return <SettingsPanel />
-      default: return <AgentsPanel />
+      default: return <OrbitalBubbleMap />
     }
   }
 
   return (
-    <motion.aside
-      className="left-panel flex flex-col bg-black/40 backdrop-blur-md border-r border-white/5 z-20 shrink-0"
-      initial={{ width: 280, opacity: 1 }}
-      animate={{ width: leftPanelOpen ? 280 : 48, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    <aside
+      style={{
+        width: 280,
+        background: 'var(--bg-panel)',
+        borderRight: '1px solid var(--border-panel)',
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        zIndex: 20,
+        position: 'relative',
+      }}
     >
-      {/* Tab bar */}
-      <div className="flex flex-wrap border-b border-white/5 shrink-0">
-        {TABS.map((tab) => {
-          const Icon = tab.icon
+      {/* Tab header */}
+      <nav
+        style={{
+          display: 'flex',
+          borderBottom: '1px solid var(--border-panel)',
+          flexShrink: 0,
+        }}
+      >
+        {tabs.map((tab) => {
           const isActive = activeTab === tab.id
           return (
             <button
               key={tab.id}
-              onClick={() => {
-                if (!leftPanelOpen) toggleLeftPanel()
-                setActiveTab(tab.id)
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                flex: 1,
+                padding: '8px 4px',
+                fontSize: 9,
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                color: isActive ? 'var(--cyan-primary)' : 'var(--text-secondary)',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: isActive ? '2px solid var(--cyan-primary)' : '2px solid transparent',
+                cursor: 'pointer',
+                transition: 'color 0.15s',
               }}
-              className="flex-1 min-w-[48px] flex flex-col items-center gap-0.5 py-2 transition-colors relative"
-              style={{ color: isActive ? '#00d4ff' : '#333' }}
-              title={tab.label}
             >
-              <Icon size={14} />
-              {leftPanelOpen && (
-                <span className="text-[8px] font-mono tracking-wider">{tab.label}</span>
-              )}
-              {isActive && (
-                <motion.div
-                  layoutId="tab-indicator"
-                  className="absolute bottom-0 left-1 right-1 h-0.5 bg-[#00d4ff] rounded-full"
-                  style={{ boxShadow: '0 0 6px #00d4ff' }}
-                />
-              )}
+              {tab.label}
             </button>
           )
         })}
-      </div>
+      </nav>
 
       {/* Panel content */}
       <AnimatePresence mode="wait">
-        {leftPanelOpen && (
-          <motion.div
-            key={activeTab}
-            className="flex-1 overflow-hidden"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            transition={{ duration: 0.15 }}
-          >
-            {renderPanel()}
-          </motion.div>
-        )}
+        <motion.div
+          key={activeTab}
+          style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 8 }}
+          transition={{ duration: 0.12 }}
+        >
+          {renderPanel()}
+        </motion.div>
       </AnimatePresence>
-    </motion.aside>
+    </aside>
   )
 }

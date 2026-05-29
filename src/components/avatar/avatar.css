@@ -1,96 +1,106 @@
+/* ============================================
+   AVATAR STYLES v2.0
+   ============================================ */
+
 .avatar-core {
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
 .avatar-canvas {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  display: block;
   pointer-events: none;
-}
-
-/* Hermes face image */
-.avatar-image-container {
-  position: relative;
-  width: 260px;
-  height: 260px;
-  z-index: 2;
-}
-
-.avatar-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  position: relative;
-  z-index: 2;
-  filter: saturate(1.2) contrast(1.1);
-}
-
-/* Glowing ring behind the image */
-.avatar-glow-ring {
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 212, 255, 0.3);
-  box-shadow:
-    0 0 20px rgba(0, 212, 255, 0.15),
-    0 0 40px rgba(0, 212, 255, 0.08),
-    inset 0 0 20px rgba(0, 212, 255, 0.05);
-  animation: ring-pulse 3s ease-in-out infinite;
   z-index: 1;
 }
 
-@keyframes ring-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 20px rgba(0, 212, 255, 0.15),
-      0 0 40px rgba(0, 212, 255, 0.08),
-      inset 0 0 20px rgba(0, 212, 255, 0.05);
-    border-color: rgba(0, 212, 255, 0.3);
-  }
-  50% {
-    box-shadow:
-      0 0 30px rgba(0, 212, 255, 0.25),
-      0 0 60px rgba(0, 212, 255, 0.12),
-      inset 0 0 30px rgba(0, 212, 255, 0.08);
-    border-color: rgba(0, 212, 255, 0.5);
-  }
+.avatar-image-container {
+  position: relative;
+  z-index: 2;
 }
 
-/* Hologram scanline over avatar */
+.avatar-glow-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 270px;
+  height: 270px;
+  border-radius: 50%;
+  pointer-events: none;
+  border: 1px solid rgba(0, 232, 255, 0.2);
+}
+
+.avatar-image {
+  position: relative;
+  z-index: 2;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
 .avatar-scanline {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(0, 212, 255, 0.02) 3px,
-    rgba(0, 212, 255, 0.02) 6px
-  );
-  z-index: 3;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .avatar-state-label {
   position: absolute;
-  bottom: 8%;
+  bottom: -28px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.75rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
   letter-spacing: 0.2em;
-  text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 0 0 10px currentColor;
-  z-index: 10;
+  user-select: none;
+}
+
+/* Avatar state ring animations */
+.avatar-ring-idle {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.avatar-ring-speaking {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.avatar-ring-thinking {
+  animation: spin-slow 2s linear infinite;
+}
+
+.avatar-ring-listening {
+  animation: pulse-glow 1s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.02); opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

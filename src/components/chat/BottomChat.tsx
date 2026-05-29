@@ -1,17 +1,26 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Trash2, ChevronRight } from 'lucide-react'
+import { Send, Trash2, Settings, ArrowRightLeft } from 'lucide-react'
 import { useHermesStore } from '../../store/hermes'
 import type { ChatMode } from '../../store/types'
 
 const CHAT_MODES: { id: ChatMode; label: string; color: string }[] = [
-  { id: 'chat', label: 'CHAT', color: '#00d4ff' },
+  { id: 'chat', label: 'CHAT', color: '#00e8ff' },
   { id: 'tactical', label: 'TACTICAL', color: '#8b5cf6' },
-  { id: 'coding', label: 'CODING', color: '#22d3ee' },
-  { id: 'ctf', label: 'CTF', color: '#ff2d55' },
-  { id: 'research', label: 'RESEARCH', color: '#f0f0ff' },
-  { id: 'autonomous', label: 'AUTO', color: '#fbbf24' },
+  { id: 'coding', label: 'CODING', color: '#00c8e8' },
+  { id: 'ctf', label: 'CTF', color: '#ff2244' },
+  { id: 'research', label: 'RESEARCH', color: '#d8eeff' },
+  { id: 'autonomous', label: 'AUTO', color: '#e8a020' },
 ]
+
+const RESPONSES: Record<string, string> = {
+  chat: 'Acknowledged, Operator. Processing request. All systems analyzing. Results incoming.',
+  tactical: '[TACTICAL MODE] Input logged. Scanning operational parameters. Standing by.',
+  coding: '> Command received. Compiling response.\n> Output: Executing build pipeline.',
+  ctf: '[CTF MODE] Target locked. Reconnaissance modules engaged. Awaiting engagement auth.',
+  research: '[RESEARCH] Query cross-referenced. Found relevant sources. Synthesizing.',
+  autonomous: '[AUTONOMOUS] Directive accepted. Delegating to agent swarm. Reporting on completion.',
+}
 
 export default function BottomChat() {
   const messages = useHermesStore((s) => s.messages)
@@ -33,27 +42,19 @@ export default function BottomChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streamingText])
 
-  const handleSend = () => {
-    if (!input.trim()) return
+  const modeColor = CHAT_MODES.find((m) => m.id === chatMode)?.color ?? '#00e8ff'
+
+  const handleSend = useCallback(() => {
+    if (!input.trim() || isStreaming) return
     const text = input.trim()
     setInput('')
 
     addMessage({ role: 'user', content: text, mode: chatMode })
     setAvatarState('thinking')
 
-    // Simulate Hermes response
     setTimeout(() => {
-      setAvatarState('speaking')
-      const responses: Record<ChatMode, string> = {
-        chat: `Acknowledged, Operator. Processing: "${text}". All systems analyzing your request. I'll have results momentarily.`,
-        tactical: `[TACTICAL] Analyzing input: "${text}". Scanning threat vectors... No immediate dangers detected. Standing by for further orders.`,
-        coding: `> Processing command: "${text}"\n> Compiling response...\n> Output: Command received. Executing build pipeline. Check terminal for live output.`,
-        ctf: `[CTF MODE] Target acquired: "${text}". Initiating reconnaissance sequence. Exploit modules loaded. Awaiting engagement authorization.`,
-        research: `[RESEARCH] Query logged: "${text}". Cross-referencing knowledge base... Found 12 relevant sources. Synthesizing response.`,
-        autonomous: `[AUTONOMOUS] Directive accepted: "${text}". Delegating to agent swarm. I'll report back when all tasks complete.`,
-      }
-
-      const fullText = responses[chatMode] || responses.chat
+      setAvatarState('speaking' as any)
+      const fullText = RESPONSES[chatMode] ?? RESPONSES.chat
       let i = 0
       const interval = setInterval(() => {
         if (i < fullText.length) {
@@ -64,73 +65,143 @@ export default function BottomChat() {
           finishStream()
           setAvatarState('idle')
         }
-      }, 15)
-    }, 800)
+      }, 12)
+    }, 600)
+  }, [input, isStreaming, chatMode, addMessage, appendStream, finishStream, setAvatarState])
+
+  const getTagStyle = (role: string): { tag: string; color: string } => {
+    switch (role) {
+      case 'system': return { tag: '[SYS]', color: 'var(--amber-sys)' }
+      case 'user': return { tag: 'USER', color: '#ffffff' }
+      default: return { tag: 'HERMES', color: 'var(--cyan-primary)' }
+    }
   }
 
   return (
-    <div className="bottom-chat flex flex-col h-full">
-      {/* Mode selector */}
-      <div className="flex items-center gap-1 px-3 py-1.5 border-b border-white/5 bg-black/30">
+    <div className="bottom-chat" style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+      {/* Tab bar */}
+      <div
+        style={{
+          height: 36,
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 12px',
+          gap: 2,
+          borderBottom: '1px solid var(--border-panel)',
+          background: 'var(--bg-surface)',
+          flexShrink: 0,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 10,
+            color: modeColor,
+            marginRight: 4,
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+          }}
+        >
+          &#9654;
+        </span>
         {CHAT_MODES.map((m) => (
           <button
             key={m.id}
             onClick={() => setChatMode(m.id)}
             className="mode-tab"
             style={{
-              color: chatMode === m.id ? m.color : '#555',
-              borderColor: chatMode === m.id ? `${m.color}44` : 'transparent',
+              color: chatMode === m.id ? m.color : 'var(--text-secondary)',
+              borderColor: chatMode === m.id ? m.color + '44' : 'transparent',
+              borderBottom: chatMode === m.id ? `2px solid ${m.color}` : '2px solid transparent',
               textShadow: chatMode === m.id ? `0 0 8px ${m.color}` : 'none',
+              padding: '4px 10px',
             }}
           >
             {m.label}
           </button>
         ))}
-        <div className="flex-1" />
-        <button onClick={clearChat} className="text-[#555] hover:text-[#ff2d55] transition-colors p-1" title="Clear chat">
-          <Trash2 size={14} />
+        <div style={{ flex: 1 }} />
+        <button
+          onClick={clearChat}
+          style={{
+            color: 'var(--text-secondary)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '4px 6px',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+          title="Clear chat"
+        >
+          <Trash2 size={13} />
         </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 scrollbar-thin">
-        <AnimatePresence>
-          {messages.map((msg) => (
-            <motion.div
-              key={msg.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className={`chat-message ${msg.role === 'user' ? 'ml-auto' : ''}`}
-            >
-              <div
-                className="chat-bubble"
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '8px 16px',
+          background: 'var(--bg-surface)',
+          minHeight: 0,
+        }}
+      >
+        <AnimatePresence initial={false}>
+          {messages.map((msg) => {
+            const { tag, color } = getTagStyle(msg.role)
+            return (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
                 style={{
-                  borderColor: msg.role === 'user' ? '#00d4ff33' : msg.role === 'system' ? '#8b5cf633' : '#ff2d5533',
-                  background: msg.role === 'user' ? '#00d4ff08' : msg.role === 'system' ? '#8b5cf608' : '#ff2d5508',
+                  marginBottom: 8,
+                  textAlign: msg.role === 'user' ? 'right' : 'left',
                 }}
               >
-                <span className="chat-role" style={{ color: msg.role === 'user' ? '#00d4ff' : msg.role === 'system' ? '#8b5cf6' : '#ff2d55' }}>
-                  {msg.role === 'user' ? '>' : msg.role === 'system' ? '[SYS]' : 'HERMES ▸'}
-                </span>
-                <p className="chat-content">{msg.content}</p>
-              </div>
-            </motion.div>
-          ))}
+                <div
+                  className={`chat-message ${msg.role === 'user' ? 'ml-auto' : ''}`}
+                  style={{
+                    display: 'inline-block',
+                    textAlign: 'left',
+                    borderLeft:
+                      msg.role === 'system'
+                        ? '2px solid var(--amber-sys)'
+                        : msg.role === 'hermes'
+                        ? '2px solid var(--cyan-primary)'
+                        : '2px solid rgba(255,255,255,0.2)',
+                    paddingLeft: 10,
+                  }}
+                >
+                  <span className="chat-role" style={{ color }}>
+                    {tag} &#9654;
+                  </span>
+                  <p
+                    className="chat-content"
+                    style={{
+                      textTransform: msg.role === 'system' ? 'uppercase' : 'none',
+                      fontSize: 12,
+                    }}
+                  >
+                    {msg.content}
+                  </p>
+                </div>
+              </motion.div>
+            )
+          })}
         </AnimatePresence>
 
-        {/* Streaming text */}
+        {/* Streaming */}
         {isStreaming && streamingText && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="chat-message"
-          >
-            <div className="chat-bubble" style={{ borderColor: '#ff2d5533', background: '#ff2d5508' }}>
-              <span className="chat-role" style={{ color: '#ff2d55' }}>HERMES ▸</span>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginBottom: 8 }}>
+            <div style={{ borderLeft: '2px solid var(--cyan-primary)', paddingLeft: 10 }}>
+              <span className="chat-role" style={{ color: 'var(--cyan-primary)' }}>
+                HERMES &#9654;
+              </span>
               <p className="chat-content">
                 {streamingText}
-                <span className="cursor-blink">█</span>
+                <span className="cursor-blink">&#9608;</span>
               </p>
             </div>
           </motion.div>
@@ -138,26 +209,61 @@ export default function BottomChat() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="px-4 py-3 border-t border-white/5 bg-black/40">
-        <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/10 focus-within:border-[#00d4ff44] transition-colors">
-          <ChevronRight size={16} className="text-[#00d4ff] shrink-0" />
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Enter command..."
-            className="flex-1 bg-transparent text-[#f0f0ff] text-sm font-mono outline-none placeholder:text-white/20"
-          />
-          <button
-            onClick={handleSend}
-            className="text-[#00d4ff] hover:text-[#22d3ee] transition-colors p-1"
-          >
-            <Send size={16} />
-          </button>
-        </div>
+      {/* Input bar */}
+      <div
+        style={{
+          height: 44,
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 12px',
+          borderTop: '1px solid var(--border-panel)',
+          background: 'var(--bg-surface)',
+          gap: 8,
+          flexShrink: 0,
+        }}
+      >
+        <span style={{ color: modeColor, fontSize: 16, flexShrink: 0 }}>&#9654;</span>
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          placeholder="Enter command..."
+          className="cmd-input"
+          style={{ flex: 1, minWidth: 0 }}
+        />
+        <button
+          title="Quick settings"
+          style={{
+            color: 'var(--text-secondary)',
+            background: 'none',
+            border: '1px solid var(--border-panel)',
+            borderRadius: 4,
+            padding: '4px 6px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexShrink: 0,
+          }}
+        >
+          <Settings size={13} />
+        </button>
+        <button
+          title="Submit"
+          onClick={handleSend}
+          style={{
+            color: modeColor,
+            background: 'none',
+            border: '1px solid ' + modeColor + '44',
+            borderRadius: 4,
+            padding: '4px 6px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexShrink: 0,
+          }}
+        >
+          <ArrowRightLeft size={13} />
+        </button>
       </div>
     </div>
   )
