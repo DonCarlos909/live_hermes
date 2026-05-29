@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type {
   HermesState,
   AvatarState,
@@ -71,7 +72,9 @@ const DEFAULT_SETTINGS: UserSettings = {
   theme: 'cyber',
 }
 
-export const useHermesStore = create<HermesState>((set) => ({
+export const useHermesStore = create<HermesState>()(
+  persist(
+    (set) => ({
   // Avatar
   avatarState: 'idle',
   setAvatarState: (state: AvatarState) => set({ avatarState: state }),
@@ -185,4 +188,12 @@ export const useHermesStore = create<HermesState>((set) => ({
   setActiveSidebarTab: (tab) => set({ activeSidebarTab: tab }),
   leftPanelOpen: true,
   toggleLeftPanel: () => set((s) => ({ leftPanelOpen: !s.leftPanelOpen })),
-}))
+    }),
+    {
+      name: 'hermes-storage',
+      partialize: (state) => ({
+        settings: state.settings,
+      }),
+    }
+  )
+)

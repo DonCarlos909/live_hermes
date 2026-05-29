@@ -169,3 +169,9 @@ body {
 .bar-fill.red {
   background: linear-gradient(90deg, #5a1a28, var(--red-alert));
 }
+
+/* Cursor blink for inline style reference */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
